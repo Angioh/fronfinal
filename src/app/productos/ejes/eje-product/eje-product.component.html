@@ -1,0 +1,56 @@
+<div class="container-fluid product-container">
+  @if (cargando) {
+  <div class="text-center my-4">
+    <div class="spinner-border"></div>
+  </div>
+  }@else{
+  <div class="row gx-3 align-items-start">
+    <!-- Imagen a la izquierda, ahora algo más grande -->
+    <div class="col-12 col-md-6 mb-3 mb-md-0 d-flex justify-content-center">
+      <img
+        [src]="eje?.imagen_url"
+        [alt]="eje?.nombre"
+        class="product-image"
+      />
+    </div>
+
+    <!-- Información del eje a la derecha -->
+    <div
+      class="col-12 col-md-6 d-flex flex-column justify-content-between product-info"
+    >
+      <div>
+        <h2 class="mb-2">{{ eje?.nombre }}</h2>
+        <p><strong>Marca:</strong> {{ eje?.marca }}</p>
+        <p><strong>Color:</strong> {{ eje?.color }}</p>
+        <p><strong>Tamaño:</strong> {{ eje?.tamanho }}</p>
+        <p><strong>Precio:</strong> {{ eje?.precio | number:'1.2-2'}} €</p>
+        <p class="mb-3">{{ eje?.descripcion }}</p>
+
+        @if (eje?.cantidad <= 5 && eje?.cantidad >0) {
+        <span class="badge bg-danger">¡Últimas unidades!</span>
+        }@else if(eje?.cantidad === 0) {
+          <span class="badge bg-danger">¡Sin Stock!</span>
+        }
+      </div>
+
+      <!-- Botones al pie, más cortos -->
+      <div class="d-grid gap-2 mt-3">
+        <button
+          class="btn btn-dark btn-sm btn-compact"
+          (click)="agregarAlCarrito(eje)"
+          [disabled]="eje?.cantidad === 0"
+        >
+          <i class="bi bi-cart-plus me-1"></i>
+          {{ eje?.cantidad === 0 ? "Sin stock" : "Añadir al carrito" }}
+        </button>
+        <a
+          routerLink="/ejes"
+          class="btn btn-outline-dark text-center btn-compact"
+        >
+          <i class="bi bi-arrow-left me-1"></i>Volver a Ejes
+        </a>
+      </div>
+    </div>
+  </div>
+  }
+</div>

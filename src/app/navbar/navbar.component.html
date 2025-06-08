@@ -1,0 +1,225 @@
+<!-- Navbar Blanco y Negro con fondo blanco -->
+<nav
+  class="navbar navbar-expand-lg navbar-light bg-white border-bottom shadow-sm"
+>
+  <div class="container-fluid">
+    <!-- Logo -->
+    <a class="navbar-brand mx-lg-5" routerLink="/">
+      <img
+        src="assets/images/LogoSkate.png"
+        alt="Logo"
+        class="img-fluid"
+        style="max-width: 100px"
+      />
+    </a>
+
+    <!-- Botón para móviles -->
+    <button
+      class="navbar-toggler border-0"
+      type="button"
+      data-bs-toggle="collapse"
+      data-bs-target="#navbarNav"
+      aria-controls="navbarNav"
+      aria-expanded="false"
+      aria-label="Toggle navigation"
+    >
+      <span class="navbar-toggler-icon"></span>
+    </button>
+
+    <!-- Contenedor con animación -->
+    <div
+      class="collapse navbar-collapse animate-collapse justify-content-between"
+      id="navbarNav"
+    >
+      <ul
+        class="navbar-nav me-auto mb-2 mb-lg-0 d-flex flex-column flex-lg-row text-center"
+      >
+        <li class="nav-item">
+          <a
+            routerLink="/tablas"
+            routerLinkActive="active"
+            class="nav-link text-dark underline"
+            >Tablas</a
+          >
+        </li>
+        <li class="nav-item">
+          <a
+            routerLink="/lijas"
+            routerLinkActive="active"
+            class="nav-link text-dark underline"
+            >Lijas</a
+          >
+        </li>
+        <li class="nav-item">
+          <a
+            routerLink="/ruedas"
+            routerLinkActive="active"
+            class="nav-link text-dark underline"
+            >Ruedas</a
+          >
+        </li>
+        <li class="nav-item">
+          <a
+            routerLink="/ejes"
+            routerLinkActive="active"
+            class="nav-link text-dark underline"
+            >Ejes</a
+          >
+        </li>
+        <li class="nav-item">
+          <a
+            routerLink="/rodamientos"
+            routerLinkActive="active"
+            class="nav-link text-dark underline"
+            >Rodamientos</a
+          >
+        </li>
+        <li class="nav-item">
+          <a
+            routerLink="/tornillos"
+            routerLinkActive="active"
+            class="nav-link text-dark underline"
+            >Tornillos</a
+          >
+        </li>
+      </ul>
+
+      <!-- Buscador centrado -->
+      <form class="d-flex mx-auto my-2 my-lg-0">
+        <div class="input-group">
+          <button class="btn btn-outline-dark" type="submit">
+            <i class="bi bi-search"></i>
+          </button>
+          <input
+            class="form-control border-dark shadow-none"
+            type="search"
+            placeholder="Buscar"
+            aria-label="Buscar"
+            id="buscar"
+          />
+        </div>
+      </form>
+
+      <!-- Carrito de compra y usuario -->
+      <div
+        class="d-flex justify-content-center justify-content-lg-end align-items-center mx-4 pt-2"
+      >
+        <div class="d-flex align-items-center">
+          <a
+  class="text-dark me-3 position-relative"
+  (click)="abrirCarrito()"
+  role="button"
+>
+  <i class="bi bi-cart fs-4"></i>
+
+  @if (carritoCount > 0) {
+    <span
+      class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-dark text-white"
+    >
+      {{ carritoCount }}
+    </span>
+  }
+</a>
+
+
+          <!-- Usuario móvil -->
+          <div class="dropup d-block d-md-none">
+            @if (userLogin) {
+            <a
+              class="text-dark dropdown-toggle text-decoration-none"
+              href="#"
+              id="dropdownMenuLinkMobile"
+              data-bs-toggle="dropdown"
+            >
+              Hola {{ nombre }}
+            </a>
+            } @else {
+            <a
+              class="text-dark dropdown-toggle"
+              href="#"
+              id="dropdownMenuLinkMobile"
+              data-bs-toggle="dropdown"
+            >
+              <i class="bi bi-person-circle fs-4"></i>
+            </a>
+            }
+
+            <ul
+              class="dropdown-menu dropdown-menu-end"
+              aria-labelledby="dropdownMenuLinkMobile"
+            >
+              @if (userLogin) {
+              <li>
+                <a [routerLink]="dashboardRoute" class="dropdown-item"
+                  >Dashboard</a
+                >
+              </li>
+              <li>
+                <a class="dropdown-item" href="#" (click)="cerrarSesion()"
+                  >Cerrar sesión</a
+                >
+              </li>
+              } @else {
+              <li>
+                <a routerLink="/login" class="dropdown-item">Iniciar sesión</a>
+              </li>
+              <li>
+                <a routerLink="/register" class="dropdown-item">Crear cuenta</a>
+              </li>
+              }
+            </ul>
+          </div>
+
+          <!-- Usuario escritorio -->
+          <div class="dropdown d-none d-md-block">
+            @if (userLogin) {
+            <a
+              class="text-dark dropdown-toggle text-decoration-none"
+              href="#"
+              id="dropdownMenuLinkDesktop"
+              data-bs-toggle="dropdown"
+            >
+              Hola {{ nombre }}
+            </a>
+
+            } @else {
+            <a
+              class="text-dark dropdown-toggle"
+              href="#"
+              id="dropdownMenuLinkDesktop"
+              data-bs-toggle="dropdown"
+            >
+              <i class="bi bi-person-circle fs-4"></i>
+            </a>
+            }
+
+            <ul
+              class="dropdown-menu dropdown-menu-end"
+              aria-labelledby="dropdownMenuLinkDesktop"
+            >
+              @if (userLogin) {
+              <li>
+                <a [routerLink]="dashboardRoute" class="dropdown-item"
+                  >Dashboard</a
+                >
+              </li>
+              <li>
+                <a class="dropdown-item" href="#" (click)="cerrarSesion()"
+                  >Cerrar sesión</a
+                >
+              </li>
+              } @else {
+              <li>
+                <a routerLink="/login" class="dropdown-item">Iniciar sesión</a>
+              </li>
+              <li>
+                <a routerLink="/register" class="dropdown-item">Crear cuenta</a>
+              </li>
+              }
+            </ul>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</nav>

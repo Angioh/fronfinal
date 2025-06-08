@@ -1,1 +1,16 @@
-/* You can add global styles to this file, and also import other style files */
+body{
+  font-size: medium;
+  font-family: "Signika Negative", sans-serif;
+  font-optical-sizing: auto;
+  font-weight: 700;
+  font-style: normal;
+}
+
+.card-hover {
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.card-hover:hover {
+  transform: scale(1.07); /* Zoom suave */
+  box-shadow: 0 1rem 2rem rgba(0, 0, 0, 0.3); /* Sombra más intensa */
+}

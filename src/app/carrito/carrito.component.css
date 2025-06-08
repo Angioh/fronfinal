@@ -1,0 +1,46 @@
+/* Contenedor principal: flex-column para poder dividir header/body/footer */
+.offcanvas-carrito {
+  position: fixed;
+  top: 0;
+  right: 0;
+  width: 400px; /* antes 320px */
+  height: 100%;
+  background-color: #fff;
+  box-shadow: -2px 0 5px rgba(0, 0, 0, 0.2);
+  transform: translateX(100%);
+  transition: transform 0.3s ease-in-out;
+  z-index: 1050;
+  display: flex;
+  flex-direction: column;
+  padding: 0;               /* eliminamos paddings globales */
+}
+
+.offcanvas-carrito.show {
+  transform: translateX(0);
+}
+
+.offcanvas-carrito.hide {
+  transform: translateX(100%);
+}
+
+/* Header: no crece */
+.offcanvas-carrito .offcanvas-header {
+  padding: 1.5rem;
+  border-bottom: 1px solid #dee2e6;
+  flex: 0 0 auto;
+}
+
+/* Body: ocupa todo el espacio y hace scroll */
+.offcanvas-carrito .offcanvas-body {
+  padding: 1rem;
+  overflow-y: auto;
+  flex: 1 1 auto;
+}
+
+/* Footer: no crece y siempre visible */
+.offcanvas-carrito .offcanvas-footer {
+  padding: 1rem;
+  border-top: 1px solid #dee2e6;
+  background-color: #f8f9fa;
+  flex: 0 0 auto;
+}

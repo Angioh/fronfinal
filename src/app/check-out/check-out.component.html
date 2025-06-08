@@ -1,0 +1,273 @@
+<form [formGroup]="paymentForm" (ngSubmit)="pay()" class="container mt-5">
+  <div class="row justify-content-center">
+    <div class="col-lg-10">
+      <div class="card shadow-lg border-0 bg-white p-4">
+        <div class="row">
+          <!-- Columna izquierda -->
+          <div class="col-md-6">
+            <h4 class="text-dark mb-3">Datos del usuario</h4>
+
+            <!-- Nombre -->
+            <div class="mb-3">
+              <input
+                type="text"
+                formControlName="name"
+                placeholder="Nombre completo"
+                class="form-control shadow-none"
+                [ngClass]="{
+                  'is-invalid':
+                    paymentForm.get('name')?.touched &&
+                    paymentForm.get('name')?.invalid
+                }"
+              />
+              @if (paymentForm.get('name')?.touched &&
+              paymentForm.get('name')?.errors) {
+              <div class="text-danger small mt-1">
+                
+              </div>
+              }@if(this.paymentForm.get('name')?.errors?.['esLetra']&&
+                paymentForm.get('name')?.touched) { <br />
+                <div class="text-danger small mt-1">No pueden ser números.</div>
+                } @if(this.paymentForm.get('name')?.errors?.['minlength']&&
+                paymentForm.get('name')?.touched) { <br />
+                <div class="text-danger small mt-1">
+                  Tienen que ser 15 caracteres como mínimo.
+                </div>
+                }
+            </div>
+
+            <!-- Email -->
+            <div class="mb-3">
+              <input
+                type="email"
+                formControlName="email"
+                placeholder="tu@ejemplo.com"
+                class="form-control shadow-none"
+                [ngClass]="{
+                  'is-invalid':
+                    paymentForm.get('email')?.touched &&
+                    paymentForm.get('email')?.invalid
+                }"
+              />
+              @if (paymentForm.get('email')?.touched &&
+              paymentForm.get('email')?.errors) {
+              <div class="text-danger small mt-1">
+                Email obligatorio.
+              </div>
+              }@if(this.paymentForm.get('email')?.errors?.['email']&&
+                paymentForm.get('email')?.touched) { <br />
+                <div class="text-danger small mt-1">
+                  Este correo no es válido.
+                </div>
+                }
+            </div>
+
+            <!-- Teléfono -->
+            <div class="mb-3">
+              <input
+                type="tel"
+                formControlName="telefono"
+                placeholder="612 345 678"
+                class="form-control shadow-none"
+                maxlength="9"
+                [ngClass]="{
+                  'is-invalid':
+                    paymentForm.get('telefono')?.touched &&
+                    paymentForm.get('telefono')?.invalid
+                }"
+              />
+              @if (paymentForm.get('telefono')?.touched &&
+              paymentForm.get('telefono')?.errors) {
+              <div class="text-danger small mt-1">
+                Telefono obligatorio.
+              </div>
+              }@if(this.paymentForm.get('telefono')?.errors?.['esTelef']&&
+                paymentForm.get('telefono')?.touched) { <br />
+                <div class="text-danger small mt-1">
+                  Debe empezar por 6, 7 o 9.
+                </div>
+                }
+                @if(this.paymentForm.get('telefono')?.errors?.['minLength']&&
+                paymentForm.get('telefono')?.touched) { <br />
+                <div class="text-danger small mt-1">
+                  Debe tener 9 dígitos.
+                </div>
+                }
+            </div>
+
+            <!-- Dirección -->
+            <div class="mb-3">
+              <input
+                type="text"
+                formControlName="direccion"
+                placeholder="Calle, número, piso..."
+                class="form-control shadow-none"
+              [ngClass]="{
+                  'is-invalid':
+                    paymentForm.get('direccion')?.touched &&
+                    paymentForm.get('direccion')?.invalid
+                }"
+              />
+              @if (paymentForm.get('direccion')?.touched &&
+              paymentForm.get('direccion')?.errors) {
+              <div class="text-danger small mt-1">
+                Dirección obligatoria.
+              </div>
+              }@if(this.paymentForm.get('direccion')?.errors?.['minLength']&&
+                paymentForm.get('direccion')?.touched) { <br />
+                <div class="text-danger small mt-1">
+                  Dirección demasiado corta.
+                </div>
+                }
+                @if(this.paymentForm.get('direccion')?.errors?.['esLetra']&&
+                paymentForm.get('direccion')?.touched) { <br />
+                <div class="text-danger small mt-1">
+                  Deben ser letras y números.
+                </div>
+                }
+            </div>
+
+            <!-- Código postal -->
+            <div class="mb-3">
+              <input
+                type="text"
+                formControlName="codigoPostal"
+                placeholder="08001"
+                maxlength="5"
+                class="form-control shadow-none"
+              />
+            </div>
+
+            <!-- Provincia -->
+            <div class="mb-4">
+              <input
+                type="text"
+                formControlName="provincia"
+                placeholder="Barcelona"
+                class="form-control shadow-none"
+                readonly
+              />
+            </div>
+
+            <h5 class="text-dark mb-3">Datos de la tarjeta</h5>
+            <div class="mb-4">
+              <ngx-stripe-card
+                [options]="cardOptions"
+                [elementsOptions]="elementsOptions"
+              ></ngx-stripe-card>
+            </div>
+
+            <button
+              type="submit"
+              class="btn btn-dark w-100"
+              [disabled]="paymentForm.invalid || loading || total === 0"
+            >
+              <ng-container *ngIf="!loading; else processing">
+                Pagar {{ total | currency : "EUR" }}
+              </ng-container>
+              <ng-template #processing>Procesando...</ng-template>
+            </button>
+          </div>
+
+          <!-- Columna derecha -->
+          <div class="col-md-6">
+            <h4 class="text-dark mb-3">Carrito</h4>
+            <ul class="list-group mb-3">
+              <li
+                *ngFor="let item of carritoItems; trackBy: trackByTipoId"
+                class="list-group-item d-flex align-items-center bg-light"
+              >
+                <img
+                  [src]="item.imagen_url"
+                  alt="{{ item.nombre }}"
+                  class="me-3"
+                  style="
+                    width: 60px;
+                    height: 60px;
+                    object-fit: cover;
+                    border-radius: 4px;
+                  "
+                />
+                <div class="flex-grow-1">
+                  <strong>{{ item.nombre }}</strong>
+                  <div class="mt-1">
+                    <input
+                      type="number"
+                      [value]="item.cantidad"
+                      min="1"
+                      max="5"
+                      class="form-control form-control-sm d-inline-block shadow-none"
+                      style="width: 4rem"
+                      (change)="
+                        carritoService.updateQuantity(
+                          item,
+                          $any($event.target).value
+                        )
+                      "
+                    />
+                  </div>
+                </div>
+                <div class="d-flex align-items-center">
+                  <span class="badge bg-dark text-white rounded-pill me-2">
+                    {{
+                      item.precio * item.cantidad
+                        | currency : "EUR" : "symbol" : "1.2-2"
+                    }}
+                  </span>
+                  <button
+                    type="button"
+                    (click)="carritoService.removeProduct(item)"
+                    class="btn btn-sm btn-outline-danger ms-2"
+                  >
+                    <i class="bi bi-x-lg"></i>
+                  </button>
+                </div>
+              </li>
+            </ul>
+
+            <div class="text-end text-dark">
+              <strong>Total: {{ total | currency : "EUR" }}</strong>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</form>
+
+<!-- Modal de resultado -->
+<div
+  class="modal fade"
+  id="paymentResultModal"
+  tabindex="-1"
+  aria-labelledby="paymentResultModalLabel"
+  aria-hidden="true"
+>
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content shadow">
+      <div class="modal-header">
+        <h5 class="modal-title text-dark" id="paymentResultModalLabel">
+          {{ modalTitle }}
+        </h5>
+        <button
+          type="button"
+          class="btn-close"
+          data-bs-dismiss="modal"
+          aria-label="Cerrar"
+        ></button>
+      </div>
+      <div class="modal-body text-dark">
+        {{ modalMessage }}
+      </div>
+      <div class="modal-footer">
+        <button
+          type="button"
+          class="btn btn-outline-dark"
+          data-bs-dismiss="modal"
+        >
+          Cerrar
+        </button>
+      </div>
+    </div>
+  </div>
+</div>

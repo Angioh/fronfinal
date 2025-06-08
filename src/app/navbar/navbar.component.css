@@ -1,0 +1,14 @@
+.dropdown-item:active,
+.dropdown-item:focus {
+  background-color: #343a40 !important; 
+  color: white !important;
+}
+.nav-link.active {
+  border-bottom: 2px solid #000 !important; 
+  width: fit-content;
+  display: inline-block; 
+  font-weight: bold !important;
+  padding-bottom: 2px; 
+}
+
+

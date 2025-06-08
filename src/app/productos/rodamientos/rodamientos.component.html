@@ -1,0 +1,139 @@
+
+
+<div class="container mt-4">
+  <!-- Orden -->
+  <div class="row mb-3">
+    <div class="col-12 text-end">
+      <label for="order" class="me-2 text-dark">Ordenar por:</label>
+      <select
+        id="order"
+        class="form-select d-inline-block w-auto border-dark text-dark bg-white"
+        [(ngModel)]="ordenSeleccionado"
+        (change)="ordenarRodamientos()"
+      >
+        <option value="nombre">Nombre</option>
+        <option value="precio">Precio</option>
+      </select>
+    </div>
+  </div>
+
+  <div class="row">
+    <!-- Filtros -->
+    <div class="col-md-3 col-lg-2 bg-white border-end border-dark p-3">
+      <h5 class="text-dark">Filtros</h5>
+
+      <label for="marca" class="form-label text-dark">Marca:</label>
+      <select
+        [(ngModel)]="filtroMarca"
+        id="marca"
+        class="form-select mb-2 border-dark text-dark bg-white"
+      >
+        <option value="todos">Todos</option>
+        @for(rodamiento of rodamientos; track rodamiento.id){
+          <option value="{{ rodamiento.marca }}">{{ rodamiento.marca }}</option>
+        }
+      </select>
+
+      <button class="btn btn-dark w-100 mb-2" (click)="aplicarFiltros()">
+        Aplicar filtros
+      </button>
+      <button class="btn btn-outline-dark w-100" (click)="limpiarFiltros()">
+        Limpiar filtros
+      </button>
+    </div>
+
+    <!-- Productos -->
+    <div class="col-md-9 col-lg-10">
+      @if (cargando) {
+        <div class="text-center my-4">
+          <div class="spinner-border"></div>
+        </div>
+      } @else {
+        <!-- Row con align-items-stretch para igualar alturas -->
+        <div class="row align-items-stretch">
+          @if(filteredRodamientos.length < 1){
+            @for(rodamiento of rodamientos; track rodamiento.id){
+              <div class="col-xl-3 col-lg-4 col-md-6 col-sm-6 mb-3">
+                <div
+                  class="card h-100 shadow bg-white card-hover overflow-hidden d-flex flex-column"
+                  [routerLink]="['/rodamientos', rodamiento.id]"
+                >
+                  <img
+                    [src]="rodamiento.imagen_url"
+                    [alt]="rodamiento.nombre"
+                    class="card-img-top img-fluid p-2 zoom-img"
+                    style="max-height: 150px; object-fit: contain"
+                  />
+                  <div class="card-body text-dark d-flex flex-column">
+                    <h6 class="card-title">{{ rodamiento.nombre }}</h6>
+                    <p class="card-text small mb-1">
+                      <strong>Precio:</strong>
+                      {{ rodamiento.precio | number : "1.2-2" }}€
+                    </p>
+                    <p class="card-text small mb-2">
+                      <strong>Marca:</strong> {{ rodamiento.marca }}
+                    </p>
+                    @if(rodamiento.cantidad <= 5 && rodamiento.cantidad > 0){
+                      <p class="text-danger small mt-auto">
+                        <strong>Últimas unidades!</strong>
+                      </p>
+                    }
+                    @else if(rodamiento.cantidad == 0){
+                      <p class="text-danger small mt-auto">
+                        <strong>Sin Stock</strong>
+                      </p>
+                    }
+                  </div>
+                </div>
+              </div>
+            }
+          } @else {
+            @for(rodamiento of filteredRodamientos; track rodamiento.id){
+              <div class="col-xl-3 col-lg-4 col-md-6 col-sm-6 mb-3">
+                <div
+                  class="card h-100 shadow bg-white card-hover overflow-hidden d-flex flex-column"
+                  [routerLink]="['/rodamientos', rodamiento.id]"
+                >
+                  <img
+                    [src]="rodamiento.imagen_url"
+                    [alt]="rodamiento.nombre"
+                    class="card-img-top img-fluid p-2 zoom-img"
+                    style="max-height: 150px; object-fit: contain"
+                  />
+                  <div class="card-body text-dark d-flex flex-column">
+                    <h6 class="card-title">{{ rodamiento.nombre }}</h6>
+                    <p class="card-text small mb-1">
+                      <strong>Precio:</strong>
+                      {{ rodamiento.precio | number : "1.2-2" }}€
+                    </p>
+                    <p class="card-text small mb-2">
+                      <strong>Marca:</strong> {{ rodamiento.marca }}
+                    </p>
+                    @if(rodamiento.cantidad <= 5 && rodamiento.cantidad > 0){
+                      <p class="text-danger small mt-auto">
+                        <strong>Últimas unidades!</strong>
+                      </p>
+                    }
+                    @else if(rodamiento.cantidad == 0){
+                      <p class="text-danger small mt-auto">
+                        <strong>Sin Stock</strong>
+                      </p>
+                    }
+                  </div>
+                </div>
+              </div>
+            }
+          }
+        </div>
+      }
+
+      @if(visibleCount < filteredRodamientos.length){
+        <div class="text-center">
+          <button (click)="verMas()" class="btn btn-outline-dark mt-3">
+            Ver más
+          </button>
+        </div>
+      }
+    </div>
+  </div>
+</div>

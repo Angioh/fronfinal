@@ -1,0 +1,13 @@
+  .product-image {
+    max-width: 450px;  /* antes 400px, ahora un poco más grande */
+    width: 100%;
+    height: auto;
+    object-fit: contain;
+    border-radius: 0.25rem;
+  }
+
+    .btn-compact {
+    padding: 0.6rem 10rem;    /* menos padding */
+    font-size: 1rem;         /* fuente más pequeña */
+    white-space: nowrap;       /* sin wraps */
+  }

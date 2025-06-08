@@ -1,0 +1,109 @@
+<div class="container d-flex justify-content-center align-items-center min-vh-100">
+  <div class="w-100" style="max-width: 400px">
+    <form
+      [formGroup]="registerForm"
+      (ngSubmit)="onSubmit()"
+      class="rounded p-4 shadow bg-white"
+    >
+      <h4 class="text-center mb-4 text-dark">Crear cuenta</h4>
+
+      <!-- Nombre -->
+      <div class="mb-3">
+        <input
+          formControlName="nombre"
+          placeholder="Nombre"
+          type="text"
+          class="form-control text-dark shadow-none"
+          [ngClass]="{
+            'is-invalid': registerForm.get('nombre')?.touched && registerForm.get('nombre')?.invalid
+          }"
+        />
+        @if(registerForm.get('nombre')?.touched && registerForm.get('nombre')?.invalid){
+          <div class="text-danger small mt-1">
+            El nombre es obligatorio.
+          </div>
+        }
+      </div>
+
+      <!-- Apellidos -->
+      <div class="mb-3">
+        <input
+          formControlName="apellido"
+          placeholder="Apellidos"
+          type="text"
+          class="form-control text-dark shadow-none"
+          [ngClass]="{
+            'is-invalid': registerForm.get('apellido')?.touched && registerForm.get('apellido')?.invalid
+          }"
+        />
+        @if(registerForm.get('apellido')?.touched && registerForm.get('apellido')?.invalid){
+          <div class="text-danger small mt-1">
+            Los apellidos son obligatorios.
+          </div>
+        }
+      </div>
+
+      <!-- Correo -->
+      <div class="mb-3">
+        <input
+          formControlName="email"
+          placeholder="Correo"
+          type="email"
+          class="form-control text-dark shadow-none"
+          [ngClass]="{
+            'is-invalid': registerForm.get('email')?.touched && registerForm.get('email')?.invalid
+          }"
+        />
+        @if(registerForm.get('email')?.touched && registerForm.get('email')?.invalid){
+          <div class="text-danger small mt-1">
+            @if(registerForm.get('email')?.errors?.['required']){
+              <span>El correo es obligatorio.</span>
+            }
+            @if(registerForm.get('email')?.errors?.['email']){
+              <span>Formato de correo inválido.</span>
+            }
+          </div>
+        }
+      </div>
+
+      <!-- Contraseña -->
+      <div class="mb-3">
+        <input
+          formControlName="password"
+          placeholder="Contraseña"
+          type="password"
+          class="form-control text-dark shadow-none"
+          [ngClass]="{
+            'is-invalid': registerForm.get('password')?.touched && registerForm.get('password')?.invalid
+          }"
+        />
+        @if(registerForm.get('password')?.touched && registerForm.get('password')?.invalid){
+          <div class="text-danger small mt-1">La contraseña es obligatoria.</div>
+        }
+      </div>
+
+      <!-- Error general -->
+      @if (error) {
+        <div class="alert alert-danger py-2 px-3 mb-3">
+          {{ error }}
+        </div>
+      }
+
+      <!-- Botón -->
+      <button
+        type="submit"
+        class="btn btn-dark w-100"
+        [disabled]="registerForm.invalid"
+      >
+        Registrarse
+      </button>
+
+      <!-- Enlace a login -->
+      <div class="text-center mt-3">
+        <a routerLink="/login" class="text-decoration-none text-dark">
+          ¿Ya tienes cuenta? <strong>Inicia sesión</strong>
+        </a>
+      </div>
+    </form>
+  </div>
+</div>
