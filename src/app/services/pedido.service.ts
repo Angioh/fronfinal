@@ -22,6 +22,9 @@ export class PedidoService {
   getAllPedidos(): Observable<PedidoResponse[]> {
     return this.http.get<PedidoResponse[]>(this.API_URL);
   }
+  getUltimoPedido(): Observable<Pedido> {
+    return this.http.get<Pedido>(`${this.API_URL}/ultimo`);
+  }
 
   updatePedido(
     id: number,
