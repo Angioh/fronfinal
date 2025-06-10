@@ -14,13 +14,12 @@ import { RouterModule } from '@angular/router';
 export class RodamientosComponent {
 rodamientos: Rodamiento[] = [];
 filteredRodamientos: Rodamiento[] = [];
-    visibleCount = 10;
-    incremento = 5;
     ordenSeleccionado: string = 'nombre'
+      ordenDireccion: 'asc' | 'desc' = 'asc';
      cargando = false;
-    filtroPrecioMax= 0.00;
+
     filtroMarca = '';
-    filtroMinPrecio: any;
+
 
   constructor(private rodamientosService: RodamientosService) {}
 
@@ -37,44 +36,58 @@ filteredRodamientos: Rodamiento[] = [];
     });
   }
 
-   aplicarFiltros(): void {
-  this.filteredRodamientos = this.rodamientos.filter((rodamiento) => {
-    const cumpleMarca =
-      !this.filtroMarca || rodamiento.marca?.toLowerCase().includes(this.filtroMarca.toLowerCase());
+  aplicarFiltros(): void {
+    this.filteredRodamientos = this.rodamientos.filter(
+      (tabla) =>
+        !this.filtroMarca ||
+        tabla.marca?.toLowerCase().includes(this.filtroMarca.toLowerCase())
+    );
 
-    const cumpleMinPrecio =
-      !this.filtroMinPrecio || rodamiento.precio >= this.filtroMinPrecio;
+    this.ordenarRodamientos();
 
-
-    return cumpleMarca &&  cumpleMinPrecio ;
-  });
-  this.ordenarRodamientos();
-  this.visibleCount = 10; 
-}
+  }
 
 limpiarFiltros() {
-    this.filtroPrecioMax = 0.00;
-    this.filtroMarca = '';
+    this.filtroMarca = 'Todos';
     this.filteredRodamientos = this.rodamientos;
   }
 
-  verMas(): void {
-  this.visibleCount = Math.min(this.visibleCount + this.incremento, this.filteredRodamientos.length);
-}
-
 
 ordenarRodamientos(): void {
-  const campo = this.ordenSeleccionado;
 
-  this.filteredRodamientos.sort((a: any, b: any) => {
+  const [campo, dir] = this.ordenSeleccionado.split('-');
+  const asc = dir === 'asc';
+
+  const comparator = (a: any, b: any): number => {
     if (campo === 'precio') {
-      return a.precio - b.precio;
+
+      return asc
+        ? a.precio - b.precio
+        : b.precio - a.precio;
     }
 
-    const valorA = a[campo]?.toString().toLowerCase() || '';
-    const valorB = b[campo]?.toString().toLowerCase() || '';
-
+ 
+    const valorA = (a[campo]?.toString() || '').toLowerCase();
+    const valorB = (b[campo]?.toString() || '').toLowerCase();
     return valorA.localeCompare(valorB);
-  });
+  };
+
+
+  this.rodamientos.sort(comparator);
+
+
+  if (this.filteredRodamientos?.length) {
+    this.filteredRodamientos.sort(comparator);
+  }
 }
+get marcasUnicas(): string[] {
+
+    return Array.from(
+      new Set(
+        this.rodamientos
+          .map(t => t.marca || '')      
+          .filter(m => m.trim().length) 
+      )
+    );
+  }
 }

@@ -1,191 +1,80 @@
-<div class="container mt-4">
-  <h2 class="mb-4">Mi Perfil</h2>
+<div class="container d-flex justify-content-center align-items-start mt-5">
+  <div class="w-100" style="max-width: 700px;">
+    <h2 class="text-center text-dark mb-4">Mi Perfil</h2>
 
-  <form [formGroup]="profileForm" (ngSubmit)="onSubmit()">
-    <!-- Mensaje de error -->
-    @if (error) {
-      <div class="alert alert-danger">{{ error }}</div>
-    }
+    <form
+      [formGroup]="profileForm"
+      (ngSubmit)="onSubmit()"
+      class="bg-white p-4 rounded shadow-sm"
+    >
+      <!-- Alertas -->
+      <div *ngIf="error" class="alert alert-danger">{{ error }}</div>
+      <div *ngIf="success" class="alert alert-success">{{ success }}</div>
 
-    <!-- Mensaje de éxito -->
-    @if (success) {
-      <div class="alert alert-success">{{ success }}</div>
-    }
-
-    <!-- Nombre -->
-    <div class="mb-3">
-      <label for="nombre" class="form-label">Nombre</label>
-      <div class="input-group">
-        <input
-          id="nombre"
-          type="text"
-          class="form-control"
-          formControlName="nombre"
-        />
-        <button
-          type="button"
-          class="btn btn-outline-secondary"
-          (click)="toggleEdit('nombre')"
-          [attr.aria-label]="editableFields['nombre'] ? 'Desactivar edición nombre' : 'Editar nombre'"
+      <div class="row">
+        <!-- Campos repartidos en 2 columnas -->
+        <ng-container
+          *ngFor="let campo of [
+            { key: 'nombre', label: 'Nombre', type: 'text' },
+            { key: 'apellido', label: 'Apellido', type: 'text' },
+            { key: 'direccion', label: 'Dirección', type: 'text' },
+            { key: 'telefono', label: 'Teléfono', type: 'text' },
+            { key: 'email', label: 'Correo', type: 'email' },
+            { key: 'password', label: 'Nueva contraseña', type: 'password' },
+            { key: 'confirmPassword', label: 'Confirmar nueva contraseña', type: 'password' }
+          ]; let i = index"
         >
-          ✏
-        </button>
+          <div class="col-md-6 mb-3">
+            <label [for]="campo.key" class="form-label">{{ campo.label }}</label>
+            <div class="input-group">
+              <input
+                [id]="campo.key"
+                [type]="campo.type"
+                class="form-control shadow-none"
+                [formControlName]="campo.key"
+              />
+              <button
+                type="button"
+                class="btn btn-outline-secondary"
+                (click)="toggleEdit(campo.key)"
+                [attr.aria-label]="editableFields[campo.key] ? 'Desactivar edición' : 'Editar'"
+              >
+                <i class="bi bi-pencil-square"></i>
+              </button>
+            </div>
+            <div
+              *ngIf="profileForm.get(campo.key)?.touched && profileForm.get(campo.key)?.invalid"
+              class="text-danger small mt-1"
+            >
+              @if (campo.key === 'email') {
+                Ingresa un correo válido.
+              } @else if (campo.key === 'telefono') {
+                Debes ingresar un teléfono válido.
+              } @else if (campo.key === 'password') {
+                La contraseña debe tener al menos 6 caracteres.
+              } @else {
+                Este campo es obligatorio.
+              }
+            </div>
+          </div>
+        </ng-container>
       </div>
-      @if (profileForm.get('nombre')?.touched && profileForm.get('nombre')?.invalid) {
-        <div class="text-danger small">El nombre es obligatorio.</div>
-      }
-    </div>
 
-    <!-- Apellido -->
-    <div class="mb-3">
-      <label for="apellido" class="form-label">Apellido</label>
-      <div class="input-group">
-        <input
-          id="apellido"
-          type="text"
-          class="form-control"
-          formControlName="apellido"
-        />
-        <button
-          type="button"
-          class="btn btn-outline-secondary"
-          (click)="toggleEdit('apellido')"
-          [attr.aria-label]="editableFields['apellido'] ? 'Desactivar edición apellido' : 'Editar apellido'"
-        >
-          ✏
-        </button>
+      <!-- Validación extra -->
+      <div
+        *ngIf="profileForm.hasError('passwordsMismatch') && profileForm.get('confirmPassword')?.touched"
+        class="text-danger small mb-3"
+      >
+        Las contraseñas no coinciden.
       </div>
-      @if (profileForm.get('apellido')?.touched && profileForm.get('apellido')?.invalid) {
-        <div class="text-danger small">El apellido es obligatorio.</div>
-      }
-    </div>
 
-    <!-- Dirección -->
-    <div class="mb-3">
-      <label for="direccion" class="form-label">Dirección</label>
-      <div class="input-group">
-        <input
-          id="direccion"
-          type="text"
-          class="form-control"
-          formControlName="direccion"
-        />
-        <button
-          type="button"
-          class="btn btn-outline-secondary"
-          (click)="toggleEdit('direccion')"
-          [attr.aria-label]="editableFields['direccion'] ? 'Desactivar edición dirección' : 'Editar dirección'"
-        >
-          ✏
-        </button>
-      </div>
-      @if (profileForm.get('direccion')?.touched && profileForm.get('direccion')?.invalid) {
-        <div class="text-danger small">La dirección es obligatoria.</div>
-      }
-    </div>
-
-    <!-- Teléfono -->
-    <div class="mb-3">
-      <label for="telefono" class="form-label">Teléfono</label>
-      <div class="input-group">
-        <input
-          id="telefono"
-          type="text"
-          class="form-control"
-          formControlName="telefono"
-        />
-        <button
-          type="button"
-          class="btn btn-outline-secondary"
-          (click)="toggleEdit('telefono')"
-          [attr.aria-label]="editableFields['telefono'] ? 'Desactivar edición teléfono' : 'Editar teléfono'"
-        >
-          ✏
-        </button>
-      </div>
-      @if (profileForm.get('telefono')?.touched && profileForm.get('telefono')?.invalid) {
-        <div class="text-danger small">
-          Debes ingresar un teléfono válido (solo números, espacios, +, -).
-        </div>
-      }
-    </div>
-
-    <!-- Correo -->
-    <div class="mb-3">
-      <label for="email" class="form-label">Correo</label>
-      <div class="input-group">
-        <input
-          id="email"
-          type="email"
-          class="form-control"
-          formControlName="email"
-        />
-        <button
-          type="button"
-          class="btn btn-outline-secondary"
-          (click)="toggleEdit('email')"
-          [attr.aria-label]="editableFields['email'] ? 'Desactivar edición correo' : 'Editar correo'"
-        >
-          ✏
-        </button>
-      </div>
-      @if (profileForm.get('email')?.touched && profileForm.get('email')?.invalid) {
-        <div class="text-danger small">Ingresa un correo válido.</div>
-      }
-    </div>
-
-    <!-- Contraseña nueva -->
-    <div class="mb-3">
-      <label for="password" class="form-label">Nueva contraseña</label>
-      <div class="input-group">
-        <input
-          id="password"
-          type="password"
-          class="form-control"
-          formControlName="password"
-        />
-        <button
-          type="button"
-          class="btn btn-outline-secondary"
-          (click)="toggleEdit('password')"
-          [attr.aria-label]="editableFields['password'] ? 'Desactivar edición contraseña' : 'Editar contraseña'"
-        >
-          ✏
-        </button>
-      </div>
-      @if (profileForm.get('password')?.touched && profileForm.get('password')?.invalid) {
-        <div class="text-danger small">
-          La contraseña debe tener al menos 6 caracteres.
-        </div>
-      }
-    </div>
-
-    <!-- Confirmar contraseña -->
-    <div class="mb-3">
-      <label for="confirmPassword" class="form-label">Confirmar nueva contraseña</label>
-      <div class="input-group">
-        <input
-          id="confirmPassword"
-          type="password"
-          class="form-control"
-          formControlName="confirmPassword"
-        />
-        <button
-          type="button"
-          class="btn btn-outline-secondary"
-          (click)="toggleEdit('confirmPassword')"
-          [attr.aria-label]="editableFields['confirmPassword'] ? 'Desactivar edición confirmar contraseña' : 'Editar confirmar contraseña'"
-        >
-          ✏
-        </button>
-      </div>
-      @if (profileForm.hasError('passwordsMismatch') && profileForm.get('confirmPassword')?.touched) {
-        <div class="text-danger small">Las contraseñas no coinciden.</div>
-      }
-    </div>
-
-    <button type="submit" class="btn btn-primary" [disabled]="loading">
-      {{ loading ? 'Guardando...' : 'Guardar cambios' }}
-    </button>
-  </form>
+      <button
+        type="submit"
+        class="btn btn-dark w-100 mt-2"
+        [disabled]="loading"
+      >
+        {{ loading ? 'Guardando...' : 'Guardar cambios' }}
+      </button>
+    </form>
+  </div>
 </div>

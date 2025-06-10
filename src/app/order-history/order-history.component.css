@@ -1,0 +1,21 @@
+/* src/app/components/order-history/order-history.component.css */
+.order-history {
+  max-width: 800px;
+  margin: 0 auto;
+  padding: 1rem;
+}
+
+.order-history .error {
+  color: red;
+}
+
+.order-history ul {
+  list-style: none;
+  padding: 0;
+}
+
+.order-history li {
+  margin-bottom: 1.5rem;
+  padding-bottom: 1rem;
+  border-bottom: 1px solid #ddd;
+}

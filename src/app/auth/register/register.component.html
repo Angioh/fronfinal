@@ -1,4 +1,4 @@
-<div class="container d-flex justify-content-center align-items-center min-vh-100">
+<div class="container d-flex justify-content-center align-items-start mt-5" style="min-height: 55vh">
   <div class="w-100" style="max-width: 400px">
     <form
       [formGroup]="registerForm"
@@ -15,12 +15,33 @@
           type="text"
           class="form-control text-dark shadow-none"
           [ngClass]="{
-            'is-invalid': registerForm.get('nombre')?.touched && registerForm.get('nombre')?.invalid
+            'is-invalid':
+              registerForm.get('nombre')?.touched &&
+              registerForm.get('nombre')?.invalid
           }"
         />
-        @if(registerForm.get('nombre')?.touched && registerForm.get('nombre')?.invalid){
+        @if (
+          registerForm.get('nombre')?.touched &&
+          registerForm.get('nombre')?.errors?.["required"]
+        ) {
           <div class="text-danger small mt-1">
             El nombre es obligatorio.
+          </div>
+        }
+        @if (
+          registerForm.get('nombre')?.touched &&
+          registerForm.get('nombre')?.errors?.["esLetra"]
+        ) {
+          <div class="text-danger small mt-1">
+            Sólo se permiten letras.
+          </div>
+        }
+        @if (
+          registerForm.get('nombre')?.touched &&
+          registerForm.get('nombre')?.errors?.["minlength"]
+        ) {
+          <div class="text-danger small mt-1">
+            Mínimo 5 caracteres.
           </div>
         }
       </div>
@@ -33,12 +54,33 @@
           type="text"
           class="form-control text-dark shadow-none"
           [ngClass]="{
-            'is-invalid': registerForm.get('apellido')?.touched && registerForm.get('apellido')?.invalid
+            'is-invalid':
+              registerForm.get('apellido')?.touched &&
+              registerForm.get('apellido')?.invalid
           }"
         />
-        @if(registerForm.get('apellido')?.touched && registerForm.get('apellido')?.invalid){
+        @if (
+          registerForm.get('apellido')?.touched &&
+          registerForm.get('apellido')?.errors?.["required"]
+        ) {
           <div class="text-danger small mt-1">
             Los apellidos son obligatorios.
+          </div>
+        }
+        @if (
+          registerForm.get('apellido')?.touched &&
+          registerForm.get('apellido')?.errors?.["esLetra"]
+        ) {
+          <div class="text-danger small mt-1">
+            Sólo se permiten letras.
+          </div>
+        }
+        @if (
+          registerForm.get('apellido')?.touched &&
+          registerForm.get('apellido')?.errors?.["minlength"]
+        ) {
+          <div class="text-danger small mt-1">
+            Mínimo 10 caracteres.
           </div>
         }
       </div>
@@ -51,17 +93,25 @@
           type="email"
           class="form-control text-dark shadow-none"
           [ngClass]="{
-            'is-invalid': registerForm.get('email')?.touched && registerForm.get('email')?.invalid
+            'is-invalid':
+              registerForm.get('email')?.touched &&
+              registerForm.get('email')?.invalid
           }"
         />
-        @if(registerForm.get('email')?.touched && registerForm.get('email')?.invalid){
+        @if (
+          registerForm.get('email')?.touched &&
+          registerForm.get('email')?.errors?.["required"]
+        ) {
           <div class="text-danger small mt-1">
-            @if(registerForm.get('email')?.errors?.['required']){
-              <span>El correo es obligatorio.</span>
-            }
-            @if(registerForm.get('email')?.errors?.['email']){
-              <span>Formato de correo inválido.</span>
-            }
+            El correo es obligatorio.
+          </div>
+        }
+        @if (
+          registerForm.get('email')?.touched &&
+          registerForm.get('email')?.errors?.["email"]
+        ) {
+          <div class="text-danger small mt-1">
+            Formato de correo inválido.
           </div>
         }
       </div>
@@ -74,11 +124,39 @@
           type="password"
           class="form-control text-dark shadow-none"
           [ngClass]="{
-            'is-invalid': registerForm.get('password')?.touched && registerForm.get('password')?.invalid
+            'is-invalid':
+              registerForm.get('password')?.touched &&
+              registerForm.get('password')?.invalid
           }"
         />
-        @if(registerForm.get('password')?.touched && registerForm.get('password')?.invalid){
-          <div class="text-danger small mt-1">La contraseña es obligatoria.</div>
+        @if (
+          registerForm.get('password')?.touched &&
+          registerForm.get('password')?.errors?.["required"]
+        ) {
+          <div class="text-danger small mt-1">
+            La contraseña es obligatoria.
+          </div>
+        }
+        @if (
+          registerForm.get('password')?.touched &&
+          registerForm.get('password')?.errors?.["minlength"]
+        ) {
+          <div class="text-danger small mt-1">
+            Mínimo 8 caracteres.
+          </div>
+        }
+        @if (
+          registerForm.get('password')?.touched &&
+          registerForm.get('password')?.errors?.["passwordInvalida"]
+        ) {
+          <div class="text-danger small mt-1">
+            Debe incluir al menos:
+            <ul class="mb-0">
+              <li>Una mayúscula</li>
+              <li>Un número</li>
+              <li>Un carácter “.” o “-”</li>
+            </ul>
+          </div>
         }
       </div>
 

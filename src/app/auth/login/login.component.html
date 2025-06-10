@@ -1,4 +1,4 @@
-<div class="container d-flex justify-content-center align-items-center min-vh-100">
+<div class="container d-flex justify-content-center align-items-start pt-5" style="min-height: 60vh;">
   <div class="w-100" style="max-width: 400px;">
     <form
       [formGroup]="loginForm"
@@ -51,7 +51,8 @@
       }
 
       <!-- Botón -->
-      <button type="submit" class="btn btn-dark w-100">Entrar</button>
+      <button type="submit" class="btn btn-dark w-100"
+      [disabled]="loginForm.invalid">Entrar</button>
 
       <!-- Enlace -->
       <div class="text-center mt-3">

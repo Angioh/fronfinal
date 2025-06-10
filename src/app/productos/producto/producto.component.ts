@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, ViewChild, ElementRef, AfterViewInit, OnInit } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { TablasService } from './../tablas/tablas.service';
 import { CarritoService, Producto } from '../../services/carrito.service';
@@ -10,11 +10,13 @@ import { RouterModule } from '@angular/router';
   styleUrls: ['./producto.component.css'],
   imports: [RouterModule]  
 })
-export class ProductoComponent implements OnInit {
+export class ProductoComponent implements OnInit,AfterViewInit {
+ @ViewChild('zoomImg', { static: false }) zoomImg!: ElementRef<HTMLImageElement>;
+
   producto: any;
   cantidadSeleccionada = 1;
   cantidadesDisponibles: number[] = [];
-  cargando = false;  // <-- bandera del spinner
+  cargando = false; 
 
   constructor(
     private route: ActivatedRoute,
@@ -26,10 +28,10 @@ export class ProductoComponent implements OnInit {
     const id = this.route.snapshot.paramMap.get('id');
     if (!id) return;
 
-    this.cargando = true;  // <-- empezamos a cargar
+    this.cargando = true; 
     this.tablasService.getTablaById(id)
       .pipe(
-        finalize(() => this.cargando = false)  // siempre desactiva al acabar
+        finalize(() => this.cargando = false)  
       )
       .subscribe({
         next: data => {
@@ -42,6 +44,23 @@ export class ProductoComponent implements OnInit {
           // aquí podrías mostrar un mensaje de error si quieres
         }
       });
+  }
+
+    ngAfterViewInit() {
+
+  }
+    onImageHover(e: MouseEvent) {
+    const imgEl = this.zoomImg.nativeElement;
+    const rect = imgEl.getBoundingClientRect();
+    const xPct = ((e.clientX - rect.left) / rect.width) * 100;
+    const yPct = ((e.clientY - rect.top) / rect.height) * 100;
+    imgEl.style.transformOrigin = `${xPct}% ${yPct}%`;
+    imgEl.style.transform = 'scale(1.5)';
+  }
+
+  onImageLeave() {
+    const imgEl = this.zoomImg.nativeElement;
+    imgEl.style.transform = 'scale(1)';
   }
 
   agregarAlCarrito(producto: any): void {

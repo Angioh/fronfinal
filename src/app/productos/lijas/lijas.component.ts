@@ -17,10 +17,9 @@ filteredLijas: Lija[] = [];
     visibleCount = 10;
     incremento = 5;
     ordenSeleccionado: string = 'nombre'
+      ordenDireccion: 'asc' | 'desc' = 'asc';
     cargando = false; 
-    filtroPrecioMax= 0.00;
     filtroMarca = '';
-    filtroMinPrecio: any;
 
   constructor(private lijasService: LijasService) {}
 
@@ -39,43 +38,58 @@ filteredLijas: Lija[] = [];
   }
 
    aplicarFiltros(): void {
-  this.filteredLijas = this.lijas.filter((rodamiento) => {
-    const cumpleMarca =
-      !this.filtroMarca || rodamiento.marca?.toLowerCase().includes(this.filtroMarca.toLowerCase());
+ this.filteredLijas = this.lijas.filter(
+      (lija) =>
+        !this.filtroMarca ||
+        lija.marca?.toLowerCase().includes(this.filtroMarca.toLowerCase())
+    );
 
-    const cumpleMinPrecio =
-      !this.filtroMinPrecio || rodamiento.precio >= this.filtroMinPrecio;
+    this.ordenarLijas();
 
-
-    return cumpleMarca &&  cumpleMinPrecio ;
-  });
-  this.ordenarLijas();
-  this.visibleCount = 10; 
 }
 
 limpiarFiltros() {
-    this.filtroPrecioMax = 0.00;
-    this.filtroMarca = '';
+    this.filtroMarca = 'Todos';
     this.filteredLijas = this.lijas;
   }
 
-  verMas(): void {
-  this.visibleCount = Math.min(this.visibleCount + this.incremento, this.filteredLijas.length);
-}
 
 
 ordenarLijas(): void {
-  const campo = this.ordenSeleccionado;
 
-  this.filteredLijas.sort((a: any, b: any) => {
+  const [campo, dir] = this.ordenSeleccionado.split('-');
+  const asc = dir === 'asc';
+
+  const comparator = (a: any, b: any): number => {
     if (campo === 'precio') {
-      return a.precio - b.precio;
+
+      return asc
+        ? a.precio - b.precio
+        : b.precio - a.precio;
     }
 
-    const valorA = a[campo]?.toString().toLowerCase() || '';
-    const valorB = b[campo]?.toString().toLowerCase() || '';
-
+ 
+    const valorA = (a[campo]?.toString() || '').toLowerCase();
+    const valorB = (b[campo]?.toString() || '').toLowerCase();
     return valorA.localeCompare(valorB);
-  });
+  };
+
+
+  this.lijas.sort(comparator);
+
+
+  if (this.filteredLijas?.length) {
+    this.filteredLijas.sort(comparator);
+  }
 }
+get marcasUnicas(): string[] {
+
+    return Array.from(
+      new Set(
+        this.lijas
+          .map(t => t.marca || '')      
+          .filter(m => m.trim().length) 
+      )
+    );
+  }
 }

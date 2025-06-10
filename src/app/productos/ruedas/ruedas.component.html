@@ -1,16 +1,18 @@
-<div class="container mt-4">
+<div class="container mt-4"style="min-height: 60vh">
   <!-- Orden -->
-  <div class="row mb-3">
+   <div class="row mb-3">
     <div class="col-12 text-end">
-      <label for="order" class="me-2 text-dark">Ordenar por:</label>
+      <label for="order" class="form-label">Ordenar por:</label>
       <select
+      
         id="order"
         class="form-select d-inline-block w-auto border-dark text-dark bg-white"
         [(ngModel)]="ordenSeleccionado"
         (change)="ordenarRuedas()"
       >
-        <option value="nombre">Nombre</option>
-        <option value="precio">Precio</option>
+        <option value="nombre-asc">Nombre</option>
+        <option value="precio-asc">Precio ascendente</option>
+        <option value="precio-desc">Precio descendente</option>
       </select>
     </div>
   </div>
@@ -27,8 +29,8 @@
         class="form-select mb-2 border-dark text-dark bg-white"
       >
         <option value="todos">Todos</option>
-        @for(rueda of ruedas; track rueda.id){
-        <option value="{{ rueda.marca }}">{{ rueda.marca }}</option>
+        @for(marca of marcasUnicas; track marca){
+        <option value="{{ marca }}">{{ marca }}</option>
         }
       </select>
 
@@ -114,13 +116,7 @@
         </div>
         } }
       </div>
-      } @if(visibleCount < filteredRuedas.length){
-      <div class="text-center">
-        <button (click)="verMas()" class="btn btn-outline-dark mt-3">
-          Ver más
-        </button>
-      </div>
-      }
+      } 
     </div>
   </div>
 </div>

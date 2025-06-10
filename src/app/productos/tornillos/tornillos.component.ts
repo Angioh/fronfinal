@@ -18,6 +18,7 @@ export class TornillosComponent {
       visibleCount = 2;
       incremento = 5;
       ordenSeleccionado: string = 'nombre'
+      ordenDireccion: 'asc' | 'desc' = 'asc';
       cargando = false;
       filtroPrecioMax= 0.00;
       filtroMarca = '';
@@ -38,44 +39,60 @@ export class TornillosComponent {
       });
     }
   
-     aplicarFiltros(): void {
-    this.filteredTornillos = this.tornillos.filter((tornillo) => {
-      const cumpleMarca =
-        !this.filtroMarca || tornillo.marca?.toLowerCase().includes(this.filtroMarca.toLowerCase());
-  
-      const cumpleMinPrecio =
-        !this.filtroMinPrecio || tornillo.precio >= this.filtroMinPrecio;
-  
-  
-      return cumpleMarca &&  cumpleMinPrecio ;
-    });
-    this.OrdenarTornillos();
-    this.visibleCount = 2; 
+  aplicarFiltros(): void {
+    this.filteredTornillos = this.tornillos.filter(
+      (tabla) =>
+        !this.filtroMarca ||
+        tabla.marca?.toLowerCase().includes(this.filtroMarca.toLowerCase())
+    );
+
+    this.ordenarTornillos();
+
   }
   
   limpiarFiltros() {
-      this.filtroPrecioMax = 0.00;
-      this.filtroMarca = '';
+      this.filtroMarca = 'Todos';
       this.filteredTornillos = this.tornillos;
     }
   
-    verMas(): void {
-    this.visibleCount = Math.min(this.visibleCount + this.incremento, this.tornillos.length);
+
+  
+ordenarTornillos(): void {
+  // Separamos campo y dirección del valor seleccionado
+  const [campo, dir] = this.ordenSeleccionado.split('-');
+  const asc = dir === 'asc';
+
+  const comparator = (a: any, b: any): number => {
+    if (campo === 'precio') {
+      // Numérico, invertimos según asc/desc
+      return asc
+        ? a.precio - b.precio
+        : b.precio - a.precio;
+    }
+
+    // Para strings (p.ej. nombre), siempre usamos ascendente: localeCompare
+    const valorA = (a[campo]?.toString() || '').toLowerCase();
+    const valorB = (b[campo]?.toString() || '').toLowerCase();
+    // Si quisieras soportar desc en nombre, podrías usar `asc ? cmp : -cmp`
+    return valorA.localeCompare(valorB);
+  };
+
+  // Ordena el array completo
+  this.tornillos.sort(comparator);
+
+  // Y si hay filtrado, ordena también el filtrado
+  if (this.filteredTornillos?.length) {
+    this.filteredTornillos.sort(comparator);
   }
-  
-  
-  OrdenarTornillos(): void {
-    const campo = this.ordenSeleccionado;
-  
-    this.filteredTornillos.sort((a: any, b: any) => {
-      if (campo === 'precio') {
-        return a.precio - b.precio;
-      }
-  
-      const valorA = a[campo]?.toString().toLowerCase() || '';
-      const valorB = b[campo]?.toString().toLowerCase() || '';
-  
-      return valorA.localeCompare(valorB);
-    });
+}
+get marcasUnicas(): string[] {
+
+    return Array.from(
+      new Set(
+        this.tornillos
+          .map(t => t.marca || '')      
+          .filter(m => m.trim().length) 
+      )
+    );
   }
 }

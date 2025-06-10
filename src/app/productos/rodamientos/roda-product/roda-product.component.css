@@ -1,0 +1,14 @@
+.zoom-container {
+  position: relative;
+  overflow: hidden;
+  max-width: 500px;
+  max-height: 500px;
+}
+
+.zoom-img {
+  display: block;
+  width: 100%;
+  height: auto;
+  transition: transform 0.3s ease;
+  cursor: zoom-in;
+}

@@ -43,9 +43,7 @@ export class RuedaProductComponent implements OnInit, AfterViewInit {
       });
   }
 
-  ngAfterViewInit() {
-
-  }
+  ngAfterViewInit() {}
 
   onImageHover(e: MouseEvent) {
     const imgEl = this.zoomImg.nativeElement;
@@ -53,7 +51,7 @@ export class RuedaProductComponent implements OnInit, AfterViewInit {
     const xPct = ((e.clientX - rect.left) / rect.width) * 100;
     const yPct = ((e.clientY - rect.top) / rect.height) * 100;
     imgEl.style.transformOrigin = `${xPct}% ${yPct}%`;
-    imgEl.style.transform = 'scale(2)';
+    imgEl.style.transform = 'scale(1.5)';  // Escala reducida para no cubrir tanto
   }
 
   onImageLeave() {

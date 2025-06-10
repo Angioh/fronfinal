@@ -1,26 +1,23 @@
 import { Component } from '@angular/core';
 import { FormsModule } from '@angular/forms';
-import { TablasService,Tabla } from './tablas.service';
+import { TablasService, Tabla } from './tablas.service';
 import { RouterModule } from '@angular/router';
 import { finalize } from 'rxjs/operators';
 import { CommonModule } from '@angular/common';
 @Component({
   selector: 'app-tablas',
-  imports: [FormsModule,RouterModule,CommonModule],
+  imports: [FormsModule, RouterModule, CommonModule],
   templateUrl: './tablas.component.html',
-  styleUrl: './tablas.component.css'
+  styleUrl: './tablas.component.css',
 })
 export class TablasComponent {
-tablas: Tabla[] = [];
-filteredTablas: Tabla[] = [];
-    visibleCount = 2;
-    incremento = 5;
-    ordenSeleccionado: string = 'nombre'
-  cargando = false;  // <-- bandera del spinner
+  tablas: Tabla[] = [];
+  filteredTablas: Tabla[] = [];
 
-    filtroPrecioMax= 0.00;
-    filtroMarca = '';
-    filtroMinPrecio: any;
+  ordenSeleccionado: string = 'nombre';
+  ordenDireccion: 'asc' | 'desc' = 'asc';
+  cargando = false;
+  filtroMarca = '';
 
   constructor(private tablasService: TablasService) {}
 
@@ -30,53 +27,56 @@ filteredTablas: Tabla[] = [];
 
   private fetchTablas() {
     this.cargando = true;
-    this.tablasService.getAll().pipe(
-            finalize(() => this.cargando = false)  // siempre desactiva al acabar
-          )
-          .subscribe({
-      next: (data) => (this.tablas = data),
-      error: (err) => console.error('Error al cargar tablas:', err),
-    });
+    this.tablasService
+      .getAll()
+      .pipe(finalize(() => (this.cargando = false)))
+      .subscribe({
+        next: (data) => (this.tablas = data),
+        error: (err) => console.error('Error al cargar tablas:', err),
+      });
   }
 
-   aplicarFiltros(): void {
-  this.filteredTablas = this.tablas.filter((tabla) => {
-    const cumpleMarca =
-      !this.filtroMarca || tabla.marca?.toLowerCase().includes(this.filtroMarca.toLowerCase());
+  aplicarFiltros(): void {
+    this.filteredTablas = this.tablas.filter(
+      (tabla) =>
+        !this.filtroMarca ||
+        tabla.marca?.toLowerCase().includes(this.filtroMarca.toLowerCase())
+    );
 
-    const cumpleMinPrecio =
-      !this.filtroMinPrecio || tabla.precio >= this.filtroMinPrecio;
+    this.ordenarTablas();
+  }
 
-
-    return cumpleMarca &&  cumpleMinPrecio ;
-  });
-  this.ordenarTablas();
-  this.visibleCount = 2; 
-}
-
-limpiarFiltros() {
-    this.filtroPrecioMax = 0.00;
-    this.filtroMarca = '';
+  limpiarFiltros() {
+    this.filtroMarca = 'Todos';
     this.filteredTablas = this.tablas;
   }
 
-  verMas(): void {
-  this.visibleCount = Math.min(this.visibleCount + this.incremento, this.tablas.length);
-}
+  ordenarTablas(): void {
+    const [campo, dir] = this.ordenSeleccionado.split('-');
+    const asc = dir === 'asc';
 
+    const comparator = (a: any, b: any): number => {
+      if (campo === 'precio') {
+        return asc ? a.precio - b.precio : b.precio - a.precio;
+      }
 
-ordenarTablas(): void {
-  const campo = this.ordenSeleccionado;
+      const valorA = (a[campo]?.toString() || '').toLowerCase();
+      const valorB = (b[campo]?.toString() || '').toLowerCase();
+      return valorA.localeCompare(valorB);
+    };
 
-  this.filteredTablas.sort((a: any, b: any) => {
-    if (campo === 'precio') {
-      return a.precio - b.precio;
+    this.tablas.sort(comparator);
+
+    if (this.filteredTablas?.length) {
+      this.filteredTablas.sort(comparator);
     }
+  }
 
-    const valorA = a[campo]?.toString().toLowerCase() || '';
-    const valorB = b[campo]?.toString().toLowerCase() || '';
-
-    return valorA.localeCompare(valorB);
-  });
-}
+  get marcasUnicas(): string[] {
+    return Array.from(
+      new Set(
+        this.tablas.map((t) => t.marca || '').filter((m) => m.trim().length)
+      )
+    );
+  }
 }

@@ -1,0 +1,52 @@
+<!-- src/app/components/order-admin/order-admin.component.html -->
+<div class="admin-orders" style="min-height: 55vh">
+  <h2>Gestión de Pedidos (Admin)</h2>
+
+  <div *ngIf="loading">
+    <div class="text-center my-4">
+      <div class="spinner-border" role="status">
+        <span class="visually-hidden">Cargando...</span>
+      </div>
+    </div>
+  </div>
+  <div *ngIf="error" class="error">{{ error }}</div>
+
+  <table *ngIf="!loading && !error && pedidos.length > 0">
+    <thead>
+      <tr>
+        <th>ID</th>
+        <th>Usuario</th>
+        <th>Estado</th>
+        <th>Cantidad</th>
+        <th>Fecha</th>
+        <th>Acciones</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr *ngFor="let ped of pedidos">
+        <td>{{ ped.id }}</td>
+        <td>{{ ped.userId }}</td>
+        <td>
+          <select
+            class="form-select"
+            [(ngModel)]="ped.estado"
+            (ngModelChange)="onEstadoChange(ped.id, $event)"
+          >
+            <option *ngFor="let e of estados" [ngValue]="e">{{ e }}</option>
+          </select>
+        </td>
+        <td>{{ ped.cantidad }}</td>
+        <td>{{ ped.fechaCreacion | date : "short" }}</td>
+        <td>
+          <button (click)="onDelete(ped.id)" class="btn-delete">
+            Eliminar
+          </button>
+        </td>
+      </tr>
+    </tbody>
+  </table>
+
+  <div *ngIf="!loading && !error && pedidos.length === 0">
+    No hay pedidos registrados.
+  </div>
+</div>

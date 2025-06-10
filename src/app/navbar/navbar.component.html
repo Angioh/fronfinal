@@ -1,14 +1,12 @@
 <!-- Navbar Blanco y Negro con fondo blanco -->
-<nav
-  class="navbar navbar-expand-lg navbar-light bg-white border-bottom shadow-sm"
->
+<nav class="navbar navbar-expand-lg navbar-light bg-white border-bottom shadow-sm">
   <div class="container-fluid">
     <!-- Logo -->
     <a class="navbar-brand mx-lg-5" routerLink="/">
       <img
         src="assets/images/LogoSkate.png"
         alt="Logo"
-        class="img-fluid"
+        class="img-fluid hover-grow"
         style="max-width: 100px"
       />
     </a>
@@ -27,194 +25,87 @@
     </button>
 
     <!-- Contenedor con animación -->
-    <div
-      class="collapse navbar-collapse animate-collapse justify-content-between"
-      id="navbarNav"
-    >
-      <ul
-        class="navbar-nav me-auto mb-2 mb-lg-0 d-flex flex-column flex-lg-row text-center"
-      >
+    <div class="collapse navbar-collapse animate-collapse justify-content-between " id="navbarNav">
+      <!-- Menú de navegación -->
+      <ul class="navbar-nav me-auto mb-2 mb-lg-0 d-flex flex-column flex-lg-row text-center fs-5">
         <li class="nav-item">
-          <a
-            routerLink="/tablas"
-            routerLinkActive="active"
-            class="nav-link text-dark underline"
-            >Tablas</a
-          >
+          <a routerLink="/tablas" routerLinkActive="active" class="nav-link text-dark underline hover-grow">Tablas</a>
         </li>
         <li class="nav-item">
-          <a
-            routerLink="/lijas"
-            routerLinkActive="active"
-            class="nav-link text-dark underline"
-            >Lijas</a
-          >
+          <a routerLink="/lijas" routerLinkActive="active" class="nav-link text-dark underline hover-grow">Lijas</a>
         </li>
         <li class="nav-item">
-          <a
-            routerLink="/ruedas"
-            routerLinkActive="active"
-            class="nav-link text-dark underline"
-            >Ruedas</a
-          >
+          <a routerLink="/ruedas" routerLinkActive="active" class="nav-link text-dark underline hover-grow">Ruedas</a>
         </li>
         <li class="nav-item">
-          <a
-            routerLink="/ejes"
-            routerLinkActive="active"
-            class="nav-link text-dark underline"
-            >Ejes</a
-          >
+          <a routerLink="/ejes" routerLinkActive="active" class="nav-link text-dark underline hover-grow">Ejes</a>
         </li>
         <li class="nav-item">
-          <a
-            routerLink="/rodamientos"
-            routerLinkActive="active"
-            class="nav-link text-dark underline"
-            >Rodamientos</a
-          >
+          <a routerLink="/rodamientos" routerLinkActive="active" class="nav-link text-dark underline hover-grow">Rodamientos</a>
         </li>
         <li class="nav-item">
-          <a
-            routerLink="/tornillos"
-            routerLinkActive="active"
-            class="nav-link text-dark underline"
-            >Tornillos</a
-          >
+          <a routerLink="/tornillos" routerLinkActive="active" class="nav-link text-dark underline hover-grow">Tornillos</a>
         </li>
       </ul>
 
-      <!-- Buscador centrado -->
-      <form class="d-flex mx-auto my-2 my-lg-0">
-        <div class="input-group">
-          <button class="btn btn-outline-dark" type="submit">
-            <i class="bi bi-search"></i>
-          </button>
-          <input
-            class="form-control border-dark shadow-none"
-            type="search"
-            placeholder="Buscar"
-            aria-label="Buscar"
-            id="buscar"
-          />
-        </div>
-      </form>
+      <!-- Título centrado (solo en pantallas grandes) -->
+      <div class="d-none d-lg-flex align-items-center justify-content-center flex-grow-1 me-5">
+        <span
+          class="fw-bold fs-2 text-dark hover-grow"
+          style="cursor: pointer;"
+          routerLink="/"
+        >
+          KICKFLIP SHOP
+        </span>
+      </div>
 
-      <!-- Carrito de compra y usuario -->
-      <div
-        class="d-flex justify-content-center justify-content-lg-end align-items-center mx-4 pt-2"
-      >
+      <!-- Carrito y usuario (siempre visible) -->
+      <div class="d-flex justify-content-center justify-content-lg-end align-items-center mx-4 pt-2 fs-5 me-5">
         <div class="d-flex align-items-center">
+          <!-- Ícono de carrito -->
           <a
-  class="text-dark me-3 position-relative"
-  (click)="abrirCarrito()"
-  role="button"
->
-  <i class="bi bi-cart fs-4"></i>
+            class="text-dark me-3 position-relative"
+            (click)="abrirCarrito()"
+            role="button"
+          >
+            <i class="bi bi-cart fs-3 hover-grow"></i>
+            @if (carritoCount > 0) {
+              <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-dark text-white">
+                {{ carritoCount }}
+              </span>
+            }
+          </a>
 
-  @if (carritoCount > 0) {
-    <span
-      class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-dark text-white"
-    >
-      {{ carritoCount }}
-    </span>
-  }
-</a>
-
-
-          <!-- Usuario móvil -->
-          <div class="dropup d-block d-md-none">
+          <!-- Dropdown de usuario (visible en todas las pantallas) -->
+          <div class="dropdown">
             @if (userLogin) {
-            <a
-              class="text-dark dropdown-toggle text-decoration-none"
-              href="#"
-              id="dropdownMenuLinkMobile"
-              data-bs-toggle="dropdown"
-            >
-              Hola {{ nombre }}
-            </a>
+              <a
+                class="text-dark dropdown-toggle text-decoration-none hover-grow"
+                href="#"
+                id="dropdownMenuLink"
+                data-bs-toggle="dropdown"
+              >
+                Hola {{ nombre }}
+              </a>
             } @else {
-            <a
-              class="text-dark dropdown-toggle"
-              href="#"
-              id="dropdownMenuLinkMobile"
-              data-bs-toggle="dropdown"
-            >
-              <i class="bi bi-person-circle fs-4"></i>
-            </a>
+              <a
+                class="text-dark dropdown-toggle hover-grow"
+                href="#"
+                id="dropdownMenuLink"
+                data-bs-toggle="dropdown"
+              >
+                <i class="bi bi-person-circle fs-3"></i>
+              </a>
             }
 
-            <ul
-              class="dropdown-menu dropdown-menu-end"
-              aria-labelledby="dropdownMenuLinkMobile"
-            >
+            <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="dropdownMenuLink">
               @if (userLogin) {
-              <li>
-                <a [routerLink]="dashboardRoute" class="dropdown-item"
-                  >Dashboard</a
-                >
-              </li>
-              <li>
-                <a class="dropdown-item" href="#" (click)="cerrarSesion()"
-                  >Cerrar sesión</a
-                >
-              </li>
+                <li><a [routerLink]="dashboardRoute" class="dropdown-item ">Mi Perfil</a></li>
+                <li><a routerLink="/cliente/mis-pedidos" class="dropdown-item">Mis pedidos</a></li>
+                <li><a class="dropdown-item" href="#" (click)="cerrarSesion()">Cerrar sesión</a></li>
               } @else {
-              <li>
-                <a routerLink="/login" class="dropdown-item">Iniciar sesión</a>
-              </li>
-              <li>
-                <a routerLink="/register" class="dropdown-item">Crear cuenta</a>
-              </li>
-              }
-            </ul>
-          </div>
-
-          <!-- Usuario escritorio -->
-          <div class="dropdown d-none d-md-block">
-            @if (userLogin) {
-            <a
-              class="text-dark dropdown-toggle text-decoration-none"
-              href="#"
-              id="dropdownMenuLinkDesktop"
-              data-bs-toggle="dropdown"
-            >
-              Hola {{ nombre }}
-            </a>
-
-            } @else {
-            <a
-              class="text-dark dropdown-toggle"
-              href="#"
-              id="dropdownMenuLinkDesktop"
-              data-bs-toggle="dropdown"
-            >
-              <i class="bi bi-person-circle fs-4"></i>
-            </a>
-            }
-
-            <ul
-              class="dropdown-menu dropdown-menu-end"
-              aria-labelledby="dropdownMenuLinkDesktop"
-            >
-              @if (userLogin) {
-              <li>
-                <a [routerLink]="dashboardRoute" class="dropdown-item"
-                  >Dashboard</a
-                >
-              </li>
-              <li>
-                <a class="dropdown-item" href="#" (click)="cerrarSesion()"
-                  >Cerrar sesión</a
-                >
-              </li>
-              } @else {
-              <li>
-                <a routerLink="/login" class="dropdown-item">Iniciar sesión</a>
-              </li>
-              <li>
-                <a routerLink="/register" class="dropdown-item">Crear cuenta</a>
-              </li>
+                <li><a routerLink="/login" class="dropdown-item">Iniciar sesión</a></li>
+                <li><a routerLink="/register" class="dropdown-item">Crear cuenta</a></li>
               }
             </ul>
           </div>

@@ -26,10 +26,10 @@
                 
               </div>
               }@if(this.paymentForm.get('name')?.errors?.['esLetra']&&
-                paymentForm.get('name')?.touched) { <br />
+                paymentForm.get('name')?.touched) { 
                 <div class="text-danger small mt-1">No pueden ser números.</div>
                 } @if(this.paymentForm.get('name')?.errors?.['minlength']&&
-                paymentForm.get('name')?.touched) { <br />
+                paymentForm.get('name')?.touched) { 
                 <div class="text-danger small mt-1">
                   Tienen que ser 15 caracteres como mínimo.
                 </div>
@@ -55,7 +55,7 @@
                 Email obligatorio.
               </div>
               }@if(this.paymentForm.get('email')?.errors?.['email']&&
-                paymentForm.get('email')?.touched) { <br />
+                paymentForm.get('email')?.touched) { 
                 <div class="text-danger small mt-1">
                   Este correo no es válido.
                 </div>
@@ -82,13 +82,13 @@
                 Telefono obligatorio.
               </div>
               }@if(this.paymentForm.get('telefono')?.errors?.['esTelef']&&
-                paymentForm.get('telefono')?.touched) { <br />
+                paymentForm.get('telefono')?.touched) { 
                 <div class="text-danger small mt-1">
                   Debe empezar por 6, 7 o 9.
                 </div>
                 }
                 @if(this.paymentForm.get('telefono')?.errors?.['minLength']&&
-                paymentForm.get('telefono')?.touched) { <br />
+                paymentForm.get('telefono')?.touched) { 
                 <div class="text-danger small mt-1">
                   Debe tener 9 dígitos.
                 </div>
@@ -102,6 +102,7 @@
                 formControlName="direccion"
                 placeholder="Calle, número, piso..."
                 class="form-control shadow-none"
+                maxlength="50"
               [ngClass]="{
                   'is-invalid':
                     paymentForm.get('direccion')?.touched &&
@@ -114,13 +115,13 @@
                 Dirección obligatoria.
               </div>
               }@if(this.paymentForm.get('direccion')?.errors?.['minLength']&&
-                paymentForm.get('direccion')?.touched) { <br />
+                paymentForm.get('direccion')?.touched) { 
                 <div class="text-danger small mt-1">
                   Dirección demasiado corta.
                 </div>
                 }
                 @if(this.paymentForm.get('direccion')?.errors?.['esLetra']&&
-                paymentForm.get('direccion')?.touched) { <br />
+                paymentForm.get('direccion')?.touched) { 
                 <div class="text-danger small mt-1">
                   Deben ser letras y números.
                 </div>
@@ -129,14 +130,55 @@
 
             <!-- Código postal -->
             <div class="mb-3">
-              <input
-                type="text"
-                formControlName="codigoPostal"
-                placeholder="08001"
-                maxlength="5"
-                class="form-control shadow-none"
-              />
-            </div>
+  <input
+    type="text"
+    formControlName="codigoPostal"
+    placeholder="08001"
+    maxlength="5"
+    class="form-control shadow-none"
+    [ngClass]="{
+      'is-invalid':
+        paymentForm.get('codigoPostal')?.touched &&
+        paymentForm.get('codigoPostal')?.invalid
+    }"
+  />
+
+  @if (
+    paymentForm.get('codigoPostal')?.touched &&
+    paymentForm.get('codigoPostal')?.errors?.["required"]
+  ) {
+    <div class="text-danger small mt-1">
+      Código postal obligatorio.
+    </div>
+  }
+
+  @if (
+    paymentForm.get('codigoPostal')?.touched &&
+    paymentForm.get('codigoPostal')?.errors?.["minlength"]
+  ) {
+    <div class="text-danger small mt-1">
+      Código postal demasiado corto.
+    </div>
+  }
+
+  @if (
+    paymentForm.get('codigoPostal')?.touched &&
+    paymentForm.get('codigoPostal')?.errors?.["esNum"]
+  ) {
+    <div class="text-danger small mt-1">
+      Deben ser sólo números.
+    </div>
+  }
+
+  @if (
+    paymentForm.get('codigoPostal')?.touched &&
+    paymentForm.get('codigoPostal')?.errors?.["cPostalExiste"]
+  ) {
+    <div class="text-danger small mt-1">
+      Debe ser un código postal de España válido.
+    </div>
+  }
+</div>
 
             <!-- Provincia -->
             <div class="mb-4">

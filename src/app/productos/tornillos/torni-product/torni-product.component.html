@@ -1,55 +1,60 @@
-<div class="container-fluid product-container">
+<div class="container-fluid product-container"style="min-height: 60vh;">
   @if (cargando) {
-  <div class="text-center my-4">
-    <div class="spinner-border"></div>
-  </div>
-  }@else{
-  <div class="row gx-3 align-items-start">
-    <!-- Imagen a la izquierda, ahora algo más grande -->
-    <div class="col-12 col-md-6 mb-3 mb-md-0 d-flex justify-content-center">
-      <img
-        [src]="torni?.imagen_url"
-        [alt]="torni?.nombre"
-        class="product-image"
-      />
+    <div class="text-center my-4">
+      <div class="spinner-border"></div>
     </div>
-
-    <!-- Información del torni a la derecha -->
-    <div
-      class="col-12 col-md-6 d-flex flex-column justify-content-between product-info"
-    >
-      <div>
-        <h2 class="mb-2">{{ torni?.nombre }}</h2>
-        <p><strong>Marca:</strong> {{ torni?.marca }}</p>
-        <p><strong>Color:</strong> {{ torni?.color }}</p>
-        <p><strong>Precio:</strong> {{ torni?.precio | number:'1.2-2'}} €</p>
-        <p class="mb-3">{{ torni?.descripcion }}</p>
-
-        @if (torni?.cantidad <= 5 && torni?.cantidad > 0) {
-        <span class="badge bg-danger">¡Últimas unidades!</span>
-        }@else if(torni.cantidad === 0) {
-          <span class="badge bg-danger">Sin Stock</span>
-        }
+  } @else {
+    <div class="row gx-3 align-items-start">
+      
+      <!-- Imagen con zoom -->
+      <div class="col-12 col-md-6 mb-3 mb-md-0 d-flex justify-content-center">
+        <div class="zoom-container">
+          <img
+            #zoomImg
+            [src]="torni?.imagen_url"
+            [alt]="torni?.nombre"
+            class="product-image zoom-img"
+            (mousemove)="onImageHover($event)"
+            (mouseleave)="onImageLeave()"
+          />
+        </div>
       </div>
 
-      <!-- Botones al pie, más cortos -->
-      <div class="d-grid gap-2 mt-3">
-        <button
-          class="btn btn-dark btn-sm btn-compact"
-          (click)="agregarAlCarrito(torni)"
-          [disabled]="torni?.cantidad === 0"
-        >
-          <i class="bi bi-cart-plus me-1"></i>
-          {{ torni?.cantidad === 0 ? "Sin stock" : "Añadir al carrito" }}
-        </button>
-        <a
-          routerLink="/tornillos"
-          class="btn btn-outline-dark text-center btn-compact"
-        >
-          <i class="bi bi-arrow-left me-1"></i>Volver a Tornillos
-        </a>
+      <!-- Información del tornillo -->
+      <div class="col-12 col-md-6 d-flex flex-column justify-content-between product-info">
+        <div>
+          <h2 class="mb-2">{{ torni?.nombre }}</h2>
+          <p><strong>Marca:</strong> {{ torni?.marca }}</p>
+          <p><strong>Color:</strong> {{ torni?.color }}</p>
+          <p><strong>Precio:</strong> {{ torni?.precio | number:'1.2-2' }} €</p>
+          <p class="mb-3">{{ torni?.descripcion }}</p>
+
+          @if (torni?.cantidad <= 5 && torni?.cantidad > 0) {
+            <span class="badge bg-danger">¡Últimas unidades!</span>
+          } @else if (torni?.cantidad === 0) {
+            <span class="badge bg-danger">Sin Stock</span>
+          }
+        </div>
+
+        <!-- Botones al pie -->
+        <div class="d-grid gap-2 mt-3">
+          <button
+            class="btn btn-dark btn-sm btn-compact"
+            (click)="agregarAlCarrito(torni)"
+            [disabled]="torni?.cantidad === 0"
+          >
+            <i class="bi bi-cart-plus me-1"></i>
+            {{ torni?.cantidad === 0 ? "Sin stock" : "Añadir al carrito" }}
+          </button>
+          <a
+            routerLink="/tornillos"
+            class="btn btn-outline-dark text-center btn-compact"
+          >
+            <i class="bi bi-arrow-left me-1"></i>Volver a Tornillos
+          </a>
+        </div>
       </div>
+
     </div>
-  </div>
   }
 </div>

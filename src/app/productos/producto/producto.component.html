@@ -1,17 +1,25 @@
-<div class="container-fluid product-container">
+<div
+  class="container-fluid product-container min-vh-60"
+  style="min-height: 60vh"
+>
   @if (cargando) {
   <div class="text-center my-4">
     <div class="spinner-border"></div>
   </div>
-  }@else{
+  } @else {
   <div class="row gx-3 align-items-start">
-    <!-- Imagen a la izquierda, ahora algo más grande -->
+    <!-- Imagen a la izquierda -->
     <div class="col-12 col-md-6 mb-3 mb-md-0 d-flex justify-content-center">
-      <img
-        [src]="producto?.imagen_url"
-        [alt]="producto?.nombre"
-        class="product-image"
-      />
+      <div class="zoom-container">
+        <img
+          #zoomImg
+          [src]="producto?.imagen_url"
+          [alt]="producto?.nombre"
+          class="product-image zoom-img"
+          (mousemove)="onImageHover($event)"
+          (mouseleave)="onImageLeave()"
+        />
+      </div>
     </div>
 
     <!-- Información del producto a la derecha -->
@@ -24,17 +32,16 @@
         <p><strong>Color:</strong> {{ producto?.color }}</p>
         <p><strong>Tamaño:</strong> {{ producto?.tamanho }}</p>
         <p><strong>Precio:</strong> {{ producto?.precio }} €</p>
-        <p><strong>Cantidad:</strong> {{ producto?.cantidad }}</p>
         <p class="mb-3">{{ producto?.descripcion }}</p>
 
         @if (producto?.cantidad <= 5 && producto?.cantidad>0) {
         <span class="badge bg-danger">¡Últimas unidades!</span>
-        }@else if (producto?.cantidad === 0)  {
-          <span class="badge bg-danger">¡Sin Stock!</span>
+        } @else if (producto?.cantidad === 0) {
+        <span class="badge bg-danger">¡Sin Stock!</span>
         }
       </div>
 
-      <!-- Botones al pie, más cortos -->
+      <!-- Botones al pie -->
       <div class="d-grid gap-2 mt-3">
         <button
           class="btn btn-dark btn-sm btn-compact"
@@ -48,7 +55,7 @@
           routerLink="/tablas"
           class="btn btn-outline-dark text-center btn-compact"
         >
-          <i class="bi bi-arrow-left me-1"></i>Volver a productos
+          <i class="bi bi-arrow-left me-1"></i>Volver a Tablas
         </a>
       </div>
     </div>

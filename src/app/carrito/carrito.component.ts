@@ -9,7 +9,7 @@ import { CommonModule } from '@angular/common';
   selector: 'app-carrito',
   templateUrl: './carrito.component.html',
   styleUrls: ['./carrito.component.css'],
-  imports: [RouterLink, FormsModule, CommonModule]
+  imports: [RouterLink, FormsModule, CommonModule],
 })
 export class CarritoComponent implements OnInit, OnDestroy {
   carritoVisible = false;
@@ -18,14 +18,14 @@ export class CarritoComponent implements OnInit, OnDestroy {
   private visSub!: Subscription;
 
   constructor(private carritoService: CarritoService) {
-    this.visSub = this.carritoService.carritoVisible$.subscribe(visible => {
+    this.visSub = this.carritoService.carritoVisible$.subscribe((visible) => {
       this.carritoVisible = visible;
     });
     this.carritoService.cerrarCarrito();
   }
 
   ngOnInit(): void {
-    this.carritoSub = this.carritoService.carrito$.subscribe(items => {
+    this.carritoSub = this.carritoService.carrito$.subscribe((items) => {
       this.carritoItems = items;
     });
   }
@@ -58,7 +58,6 @@ export class CarritoComponent implements OnInit, OnDestroy {
   }
 
   finalizarCompra(): void {
-    console.log('Finalizando compra con:', this.carritoItems);
     this.carritoService.cerrarCarrito();
   }
 

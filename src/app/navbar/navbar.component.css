@@ -12,3 +12,10 @@
 }
 
 
+.hover-grow {
+  transition: transform 0.6s ease;
+  display: inline-block;
+}
+.hover-grow:hover {
+  transform: scale(1.2);
+}

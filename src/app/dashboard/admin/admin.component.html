@@ -1,13 +1,21 @@
-
-<div class="container py-4">
-  <div class="d-flex justify-content-between mb-3 align-items-center">
-    <div>
-      <label class="form-label me-2">Tipo:</label>
-      <select class="form-select d-inline-block w-auto"
-              [(ngModel)]="selectedTipo"
-              (ngModelChange)="loadTipo($event)">
+<div class="container py-4" style="min-height: 55vh">
+  <!-- Header: botón pedidos, selector de tipo y botón crear -->
+  <div class="d-flex justify-content-between align-items-center mb-3">
+    <a
+      class="btn btn-outline-primary"
+      routerLink="/administrador/dashboard/ordenes"
+    >
+      Gestión de Pedidos (Admin)
+    </a>
+    <div class="d-flex align-items-center">
+      <label class="form-label me-2 mb-0">Tipo:</label>
+      <select
+        class="form-select w-auto"
+        [(ngModel)]="selectedTipo"
+        (ngModelChange)="loadTipo($event)"
+      >
         @for ( t of tipos; track t.key; let ti = $index) {
-          <option [value]="t.key">{{ t.label }}</option>
+        <option [value]="t.key">{{ t.label }}</option>
         }
       </select>
     </div>
@@ -16,216 +24,253 @@
     </button>
   </div>
 
+  <!-- Spinner de carga -->
   @if (cargando) {
-    <div class="text-center my-4">
-      <div class="spinner-border"></div>
+  <div class="text-center my-4">
+    <div class="spinner-border" role="status">
+      <span class="visually-hidden">Cargando...</span>
     </div>
+  </div>
   }
 
+  <!-- Mensaje de error -->
   @if (error) {
-    <div class="alert alert-danger">{{ error }}</div>
+  <div class="alert alert-danger">{{ error }}</div>
   }
 
+  <!-- Sin registros -->
   @if (!cargando && !error && items.length === 0) {
-    <div class="alert alert-info">
-      No hay registros de {{ selectedLabel }}.
-    </div>
+  <div class="alert alert-info">No hay registros de {{ selectedLabel }}.</div>
   }
 
+  <!-- Tabla de datos -->
   @if (!cargando && !error && items.length > 0) {
-    <div class="table-responsive">
-      <table class="table table-hover table-bordered">
-        <thead class="table-light">
-          <tr>
-            @for ( col of columns; track col.key; let ci = $index) {
-              <th class="text-center">{{ col.label }}</th>
-            }
-            <th class="text-center">Acciones</th>
-          </tr>
-        </thead>
-        <tbody>
-          @for ( item of items; track item.id; let i = $index) {
-            <tr>
-              @for ( col of columns; track col.key; let ci = $index) {
-  @if (col.type === 'image') {
-    <td class="align-middle text-center">
-      <img
-        [src]="item[col.key]"
-        alt="{{ col.label }}"
-        class="img-fluid"
-        style="max-height:48px; object-fit:cover;"
-      />
-    </td>
-  } @else {
-    <td class="align-middle text-center">
-      {{ item[col.key] }}
-    </td>
-  }
-}
-              <td class="text-center align-middle">
-                <button class="btn btn-outline-primary btn-sm me-1 mb-2"
-                        (click)="openEditModal(item, i)">
-                  Editar
-                </button>
-                <button class="btn btn-outline-danger btn-sm mb-2"
-                        (click)="openDeleteModal(item, i)">
-                  Eliminar
-                </button>
-              </td>
-            </tr>
+  <div class="table-responsive">
+    <table class="table table-hover table-bordered align-middle mb-0">
+      <thead class="table-light">
+        <tr>
+          @for ( col of columns; track col.key; let ci = $index) {
+          <th class="text-center">{{ col.label }}</th>
           }
-        </tbody>
-      </table>
-    </div>
+          <th class="text-center">Acciones</th>
+        </tr>
+      </thead>
+      <tbody class="scrollable-tbody">
+        @for ( item of items; track item.id; let i = $index) {
+        <tr>
+          @for ( col of columns; track col.key; let ci = $index) { @if (col.type
+          === 'image') {
+          <td class="text-center">
+            <img
+              [src]="item[col.key]"
+              alt="{{ col.label }}"
+              class="img-fluid rounded"
+              style="max-height: 48px; object-fit: cover"
+            />
+          </td>
+          } @else {
+          <td class="text-center">{{ item[col.key] }}</td>
+          } }
+          <td class="text-center">
+            <button
+              class="btn btn-outline-primary btn-sm me-1 mb-1"
+              (click)="openEditModal(item, i)"
+            >
+              Editar
+            </button>
+            <button
+              class="btn btn-outline-danger btn-sm mb-1"
+              (click)="openDeleteModal(item, i)"
+            >
+              Eliminar
+            </button>
+          </td>
+        </tr>
+        }
+      </tbody>
+    </table>
+  </div>
   }
 
-<!-- Modal Crear -->
-@if (showCreateModal) {
+  <!-- Modal Crear -->
+  @if (showCreateModal) {
   <div class="modal-backdrop fade show"></div>
-  <div class="modal fade show" tabindex="-1" style="display:block;" aria-modal="true" role="dialog">
+  <div
+    class="modal fade show"
+    tabindex="-1"
+    style="display: block"
+    aria-modal="true"
+    role="dialog"
+  >
     <div class="modal-dialog modal-dialog-centered modal-lg">
       <div class="modal-content">
-        <div class="modal-header">
+        <div class="modal-header bg-success text-white">
           <h5 class="modal-title">Crear {{ selectedLabel }}</h5>
-          <button type="button" class="btn-close" (click)="cancelCreate()"></button>
+          <button
+            type="button"
+            class="btn-close btn-close-white"
+            (click)="cancelCreate()"
+          ></button>
         </div>
         <div class="modal-body">
           <form>
-            @for (col of columns; track col.key; let ci = $index) {
-              @if (col.key !== 'id') {
-                <div class="mb-3">
-                  <label class="form-label">{{ col.label }}</label>
-
-                  @if (col.type === 'image') {
-                    <!-- URL input para imágenes -->
-                    <input
-                      type="url"
-                      class="form-control"
-                      [(ngModel)]="newItem[col.key]"
-                      [name]="col.key"
-                      placeholder="https://.../imagen.jpg"
-                    />
-                    <!-- Previsualización -->
-                    @if (newItem[col.key]) {
-                      <div class="mt-2 text-center">
-                        <img
-                          [src]="newItem[col.key]"
-                          alt="Previsualización {{ col.label }}"
-                          class="img-thumbnail"
-                          style="max-width: 150px; max-height: 150px; object-fit: cover;"
-                        />
-                      </div>
-                    }
-                  } @else {
-                    <!-- Input genérico -->
-                    <input
-                      [type]="col.type"
-                      class="form-control"
-                      [(ngModel)]="newItem[col.key]"
-                      [name]="col.key"
-                    />
-                  }
-                </div>
+            @for (col of columns; track col.key; let ci = $index) { @if (col.key
+            !== 'id') {
+            <div class="mb-3">
+              <label class="form-label">{{ col.label }}</label>
+              @if (col.type === 'image') {
+              <input
+                type="url"
+                class="form-control"
+                [(ngModel)]="newItem[col.key]"
+                [name]="col.key"
+                placeholder="https://.../imagen.jpg"
+              />
+              @if (newItem[col.key]) {
+              <div class="mt-2 text-center">
+                <img
+                  [src]="newItem[col.key]"
+                  alt="Previsualización {{ col.label }}"
+                  class="img-thumbnail rounded"
+                  style="max-width: 150px; max-height: 150px; object-fit: cover"
+                />
+              </div>
+              } } @else {
+              <input
+                [type]="col.type"
+                class="form-control"
+                [(ngModel)]="newItem[col.key]"
+                [name]="col.key"
+              />
               }
-            }
+            </div>
+            } }
           </form>
         </div>
         <div class="modal-footer">
-          <button class="btn btn-secondary" (click)="cancelCreate()">Cancelar</button>
-          <button class="btn btn-success" (click)="confirmCreate()">Crear</button>
+          <button class="btn btn-outline-secondary" (click)="cancelCreate()">
+            Cancelar
+          </button>
+          <button class="btn btn-success" (click)="confirmCreate()">
+            Crear
+          </button>
         </div>
       </div>
     </div>
   </div>
-}
+  }
 
-<!-- Modal Editar -->
-@if (showEditModal) {
+  <!-- Modal Editar -->
+  @if (showEditModal) {
   <div class="modal-backdrop fade show"></div>
-  <div class="modal fade show" tabindex="-1" style="display:block;" aria-modal="true" role="dialog">
+  <div
+    class="modal fade show"
+    tabindex="-1"
+    style="display: block"
+    aria-modal="true"
+    role="dialog"
+  >
     <div class="modal-dialog modal-dialog-centered modal-lg">
       <div class="modal-content">
-        <div class="modal-header">
+        <div class="modal-header bg-primary text-white">
           <h5 class="modal-title">Editar {{ selectedLabel }}</h5>
-          <button type="button" class="btn-close" (click)="cancelEdit()"></button>
+          <button
+            type="button"
+            class="btn-close btn-close-white"
+            (click)="cancelEdit()"
+          ></button>
         </div>
         <div class="modal-body">
           <form>
             @for (col of columns; track col.key; let ci = $index) {
-              <div class="mb-3">
-                <label class="form-label">{{ col.label }}</label>
-
-                @if (col.key === 'id') {
-                  <!-- Campo ID deshabilitado -->
-                  <input
-                    type="text"
-                    class="form-control"
-                    [ngModel]="editItem[col.key]"
-                    [name]="col.key"
-                    disabled
-                  />
-                } @else if (col.type === 'image') {
-                  <!-- URL input para imágenes -->
-                  <input
-                    type="url"
-                    class="form-control"
-                    [(ngModel)]="editItem[col.key]"
-                    [name]="col.key"
-                    placeholder="https://.../imagen.jpg"
-                  />
-                  <!-- Previsualización -->
-                  @if (editItem[col.key]) {
-                    <div class="mt-2 text-center">
-                      <img
-                        [src]="editItem[col.key]"
-                        alt="Previsualización {{ col.label }}"
-                        class="img-thumbnail"
-                        style="max-width: 150px; max-height: 150px; object-fit: cover;"
-                      />
-                    </div>
-                  }
-                } @else {
-                  <!-- Input genérico -->
-                  <input
-                    [type]="col.type"
-                    class="form-control"
-                    [(ngModel)]="editItem[col.key]"
-                    [name]="col.key"
-                  />
-                }
+            <div class="mb-3">
+              <label class="form-label">{{ col.label }}</label>
+              @if (col.key === 'id') {
+              <input
+                type="text"
+                class="form-control-plaintext"
+                [ngModel]="editItem[col.key]"
+                [name]="col.key"
+                disabled
+              />
+              } @else if (col.type === 'image') {
+              <input
+                type="url"
+                class="form-control"
+                [(ngModel)]="editItem[col.key]"
+                [name]="col.key"
+                placeholder="https://.../imagen.jpg"
+              />
+              @if (editItem[col.key]) {
+              <div class="mt-2 text-center">
+                <img
+                  [src]="editItem[col.key]"
+                  alt="Previsualización {{ col.label }}"
+                  class="img-thumbnail rounded"
+                  style="max-width: 150px; max-height: 150px; object-fit: cover"
+                />
               </div>
+              } } @else {
+              <input
+                [type]="col.type"
+                class="form-control"
+                [(ngModel)]="editItem[col.key]"
+                [name]="col.key"
+              />
+              }
+            </div>
             }
           </form>
         </div>
         <div class="modal-footer">
-          <button class="btn btn-secondary" (click)="cancelEdit()">Cancelar</button>
-          <button class="btn btn-primary" (click)="confirmEdit()">Guardar</button>
+          <button class="btn btn-outline-secondary" (click)="cancelEdit()">
+            Cancelar
+          </button>
+          <button class="btn btn-primary" (click)="confirmEdit()">
+            Guardar
+          </button>
         </div>
       </div>
     </div>
   </div>
-}
+  }
 
-<!-- Modal Eliminar (sin cambios) -->
-@if (showConfirmModal) {
+  <!-- Modal Eliminar -->
+  @if (showConfirmModal) {
   <div class="modal-backdrop fade show"></div>
-  <div class="modal fade show" tabindex="-1" style="display:block;" aria-modal="true" role="dialog">
+  <div
+    class="modal fade show"
+    tabindex="-1"
+    style="display: block"
+    aria-modal="true"
+    role="dialog"
+  >
     <div class="modal-dialog modal-dialog-centered modal-sm">
       <div class="modal-content">
-        <div class="modal-header">
+        <div class="modal-header bg-danger text-white">
           <h5 class="modal-title">Confirmar eliminación</h5>
-          <button type="button" class="btn-close" (click)="cancelDelete()"></button>
+          <button
+            type="button"
+            class="btn-close btn-close-white"
+            (click)="cancelDelete()"
+          ></button>
         </div>
         <div class="modal-body">
-          <p>¿Eliminar <strong>{{ deleteItem?.nombre }}</strong>?</p>
+          <p>
+            ¿Eliminar <strong>{{ deleteItem?.nombre }}</strong
+            >?
+          </p>
         </div>
         <div class="modal-footer">
-          <button class="btn btn-secondary" (click)="cancelDelete()">Cancelar</button>
-          <button class="btn btn-danger" (click)="confirmDelete()">Eliminar</button>
+          <button class="btn btn-outline-secondary" (click)="cancelDelete()">
+            Cancelar
+          </button>
+          <button class="btn btn-danger" (click)="confirmDelete()">
+            Eliminar
+          </button>
         </div>
       </div>
     </div>
   </div>
-}
-
+  }
 </div>

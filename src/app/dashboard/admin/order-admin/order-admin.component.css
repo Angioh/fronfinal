@@ -1,0 +1,40 @@
+/* src/app/components/order-admin/order-admin.component.css */
+.admin-orders {
+  max-width: 1000px;
+  margin: 2rem auto;
+  padding: 1rem;
+}
+
+.admin-orders .error {
+  color: red;
+  margin-bottom: 1rem;
+}
+
+.admin-orders table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.admin-orders th,
+.admin-orders td {
+  padding: 0.5rem;
+  border: 1px solid #ddd;
+  text-align: left;
+}
+
+.admin-orders select {
+  padding: 0.2rem;
+}
+
+.admin-orders .btn-delete {
+  background: #e74c3c;
+  border: none;
+  color: white;
+  padding: 0.3rem 0.6rem;
+  cursor: pointer;
+  border-radius: 4px;
+}
+
+.admin-orders .btn-delete:hover {
+  background: #c0392b;
+}

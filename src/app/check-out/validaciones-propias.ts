@@ -33,6 +33,21 @@ export class ValidacionesPropias {
     }
     return null;
   }
+  static passwordSegura(control: AbstractControl): ValidationErrors | null {
+      const pwd: string = control.value;
+      if (!pwd) {
+        return null;
+      }
+
+      const hasUpper = /[A-Z]/.test(pwd);
+      const hasNumber = /\d/.test(pwd);
+      const hasSpecial = /[.\-]/.test(pwd);
+
+      return hasUpper && hasNumber && hasSpecial
+        ? null
+        : { passwordInvalida: true };
+    
+  }
   static mismoCaptcha(control: AbstractControl): ValidationErrors | null {
     const captcha = control.get('captcha');
     const captchaS = control.get('captchaS');
@@ -56,7 +71,6 @@ export class ValidacionesPropias {
         telef.substr(0, 1) == 6 ||
         telef.substr(0, 1) == 9
       ) {
-        console.log(telef.substr(0, 1));
         return null;
       } else {
         return { esTelef: true };

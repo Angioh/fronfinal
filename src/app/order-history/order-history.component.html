@@ -1,0 +1,59 @@
+<div class="container d-flex justify-content-center align-items-start mt-5"style="min-height: 55vh">
+  <div class="w-100" style="max-width: 1100px;">
+    <h2 class="text-center text-dark mb-4">Mis Pedidos</h2>
+
+    <div *ngIf="loading" class="text-center text-secondary mb-3">
+      <div class="text-center my-4">
+      <div class="spinner-border " role="status">
+        <span class="visually-hidden">Cargando...</span>
+      </div>
+    </div>
+    </div>
+
+    <div *ngIf="error" class="alert alert-danger text-center">
+      {{ error }}
+    </div>
+
+    <div *ngIf="!loading && !error && pedidos.length > 0" class="table-responsive">
+      <table class="table table-bordered table-hover shadow-sm bg-white align-middle rounded overflow-hidden">
+        <thead class="table-light text-dark">
+          <tr>
+            <th scope="col">Pedido #</th>
+            <th scope="col">Fecha</th>
+            <th scope="col">Estado</th>
+            <th scope="col">Dirección</th>
+            <th scope="col">Teléfono</th>
+            <th scope="col">Cantidad</th>
+            <th scope="col">Productos</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let ped of pedidos">
+            <td class="fw-bold text-dark">#{{ ped.id }}</td>
+            <td class="text-dark">{{ ped.fechaCreacion | date:'medium' }}</td>
+            <td class="text-dark">{{ ped.estado }}</td>
+            <td class="text-dark">{{ ped.direccion }}</td>
+            <td class="text-dark">{{ ped.telefono }}</td>
+            <td class="text-dark">{{ ped.cantidad }}</td>
+            <td>
+              <details>
+                <summary class="text-primary text-decoration-underline" style="cursor: pointer;">
+                  Ver ({{ ped.items.length }})
+                </summary>
+                <ul class="list-unstyled ms-2 mt-2">
+                  <li *ngFor="let it of ped.items">
+                    <span class="text-dark small">• {{ it.nombre }} (x{{ it.cantidad }}) — {{ it.precio | currency:'EUR' }}</span>
+                  </li>
+                </ul>
+              </details>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div *ngIf="!loading && !error && pedidos.length === 0" class="text-center text-muted mt-4">
+      No tienes pedidos realizados aún.
+    </div>
+  </div>
+</div>

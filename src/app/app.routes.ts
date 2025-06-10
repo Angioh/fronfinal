@@ -20,6 +20,8 @@ import { LijaProductComponent } from './productos/lijas/lija-product/lija-produc
 import { RuedaProductComponent } from './productos/ruedas/rueda-product/rueda-product.component';
 import { TorniProductComponent } from './productos/tornillos/torni-product/torni-product.component';
 import { EjeProductComponent } from './productos/ejes/eje-product/eje-product.component';
+import { OrderHistoryComponent } from './order-history/order-history.component';
+import { OrderAdminComponent } from './dashboard/admin/order-admin/order-admin.component';
 
 export const routes: Routes = [
   { path: 'login', component: LoginComponent },
@@ -43,11 +45,21 @@ export const routes: Routes = [
     path: 'cliente/dashboard',
     component: ClientComponent,
     canActivate: [AuthGuard] // Solo usuarios autenticados
+  },{
+    path: 'cliente/mis-pedidos',
+    component: OrderHistoryComponent,
+    canActivate: [AuthGuard] // Solo usuarios autenticados
   },
+  
   {
     path: 'administrador/dashboard',
     component: AdminComponent,
-    canActivate: [AdminGuard] // Solo usuarios admin
+    canActivate: [AdminGuard] 
+  },
+   {
+    path: 'administrador/dashboard/ordenes',
+    component: OrderAdminComponent,
+    canActivate: [AdminGuard] 
   },
   { path: 'checkout', component: CheckOutComponent },
 

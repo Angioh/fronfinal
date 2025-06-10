@@ -4,38 +4,54 @@ import { AuthService } from '../../services/auth.service';
 import { TablasService, Tabla } from '../../productos/tablas/tablas.service';
 import { LijasService, Lija } from '../../productos/lijas/lijas.service';
 import { RuedasService, Rueda } from '../../productos/ruedas/ruedas.service';
-import { RodamientosService, Rodamiento } from '../../productos/rodamientos/rodamientos.service';
+import {
+  RodamientosService,
+  Rodamiento,
+} from '../../productos/rodamientos/rodamientos.service';
 import { EjesService, Eje } from '../../productos/ejes/ejes.service';
-import { TornillosService, Tornillo } from '../../productos/tornillos/tornillos.service';
+import {
+  TornillosService,
+  Tornillo,
+} from '../../productos/tornillos/tornillos.service';
 import { FormsModule } from '@angular/forms';
+import { CommonModule } from '@angular/common';
+import { RouterLink } from '@angular/router';
 
 @Component({
   selector: 'app-admin',
   templateUrl: './admin.component.html',
   styleUrls: ['./admin.component.css'],
-  imports: [FormsModule]
+  imports: [FormsModule, CommonModule, RouterLink],
 })
 export class AdminComponent implements OnInit {
   // --- configuración de tipos dinámicos ---
   tipos = [
-    { key: 'tablas',   label: 'Tablas' },
-    { key: 'lijas',    label: 'Lijas' },
-    { key: 'ruedas',   label: 'Ruedas' },
+    { key: 'tablas', label: 'Tablas' },
+    { key: 'lijas', label: 'Lijas' },
+    { key: 'ruedas', label: 'Ruedas' },
     { key: 'rodamientos', label: 'Rodamientos' },
-    { key: 'ejes',     label: 'Ejes' },
-    { key: 'tornillos',  label: 'Tornillos' }
+    { key: 'ejes', label: 'Ejes' },
+    { key: 'tornillos', label: 'Tornillos' },
   ];
-  config: Record<string, {
-    service: any,
-    columns: { key: string; label: string; type: 'text'|'number'|'image' }[]
-  }> = {};
+  config: Record<
+    string,
+    {
+      service: any;
+      columns: {
+        key: string;
+        label: string;
+        type: 'text' | 'number' | 'image';
+      }[];
+    }
+  > = {};
 
   selectedTipo = this.tipos[0].key;
   items: any[] = [];
-  columns: { key: string; label: string; type: 'text'|'number'|'image' }[] = [];
+  columns: { key: string; label: string; type: 'text' | 'number' | 'image' }[] =
+    [];
 
   cargando = false;
-  error: string| null = null;
+  error: string | null = null;
 
   // --- modales genéricos ---
   showCreateModal = false;
@@ -43,11 +59,11 @@ export class AdminComponent implements OnInit {
 
   showEditModal = false;
   editItem: any = null;
-  editIndex: number|null = null;
+  editIndex: number | null = null;
 
   showConfirmModal = false;
   deleteItem: any = null;
-  deleteIndex: number|null = null;
+  deleteIndex: number | null = null;
 
   constructor(
     private auth: AuthService,
@@ -63,83 +79,83 @@ export class AdminComponent implements OnInit {
       tablas: {
         service: this.tablasService,
         columns: [
-          { key:'id', label:'ID', type:'number' },
-          { key:'nombre',     label:'Nombre', type:'text' },
-          { key:'descripcion',label:'Descripción', type:'text' },
-          { key:'precio',     label:'Precio', type:'number' },
-          { key:'marca',      label:'Marca', type:'text' },
-          { key:'color',      label:'Color', type:'text' },
-          { key:'tamanho',    label:'Tamaño', type:'number' },
-          { key:'cantidad',   label:'Cantidad', type:'number' },
-          { key:'imagen_url', label:'Imagen', type:'image' },
-        ]
+          { key: 'id', label: 'ID', type: 'number' },
+          { key: 'nombre', label: 'Nombre', type: 'text' },
+          { key: 'descripcion', label: 'Descripción', type: 'text' },
+          { key: 'precio', label: 'Precio', type: 'number' },
+          { key: 'marca', label: 'Marca', type: 'text' },
+          { key: 'color', label: 'Color', type: 'text' },
+          { key: 'tamanho', label: 'Tamaño', type: 'number' },
+          { key: 'cantidad', label: 'Cantidad', type: 'number' },
+          { key: 'imagen_url', label: 'Imagen', type: 'image' },
+        ],
       },
       lijas: {
         service: this.lijasService,
         columns: [
-          { key:'id', label:'ID', type:'number' },
-          { key:'nombre', label:'Nombre', type:'text' },
-          { key:'descripcion', label:'Descripción', type:'text' },
-          { key:'precio', label:'Precio', type:'number' },
-          { key:'marca', label:'Marca', type:'text' },
-          { key:'color', label:'Color', type:'text' },
-          { key:'cantidad', label:'Cantidad', type:'number' },
-          { key:'imagen_url', label:'Imagen', type:'image' },
-        ]
+          { key: 'id', label: 'ID', type: 'number' },
+          { key: 'nombre', label: 'Nombre', type: 'text' },
+          { key: 'descripcion', label: 'Descripción', type: 'text' },
+          { key: 'precio', label: 'Precio', type: 'number' },
+          { key: 'marca', label: 'Marca', type: 'text' },
+          { key: 'color', label: 'Color', type: 'text' },
+          { key: 'cantidad', label: 'Cantidad', type: 'number' },
+          { key: 'imagen_url', label: 'Imagen', type: 'image' },
+        ],
       },
       ruedas: {
         service: this.ruedasService,
         columns: [
-          { key:'id', label:'ID', type:'number' },
-          { key:'nombre', label:'Nombre', type:'text' },
-          { key:'descripcion', label:'Descripción', type:'text' },
-          { key:'precio', label:'Precio', type:'number' },
-          { key:'marca', label:'Marca', type:'text' },
-          { key:'diametro', label:'Diámetro', type:'number' },
-          { key:'dureza', label:'Dureza', type:'number' },
-          { key:'cantidad', label:'Cantidad', type:'number' },
-          { key:'imagen_url', label:'Imagen', type:'image' },
-        ]
+          { key: 'id', label: 'ID', type: 'number' },
+          { key: 'nombre', label: 'Nombre', type: 'text' },
+          { key: 'descripcion', label: 'Descripción', type: 'text' },
+          { key: 'precio', label: 'Precio', type: 'number' },
+          { key: 'marca', label: 'Marca', type: 'text' },
+          { key: 'diametro', label: 'Diámetro', type: 'number' },
+          { key: 'dureza', label: 'Dureza', type: 'number' },
+          { key: 'cantidad', label: 'Cantidad', type: 'number' },
+          { key: 'imagen_url', label: 'Imagen', type: 'image' },
+        ],
       },
       rodamientos: {
         service: this.rodamientosService,
         columns: [
-          { key:'id', label:'ID', type:'number' },
-          { key:'nombre', label:'Nombre', type:'text' },
-          { key:'descripcion', label:'Descripción', type:'text' },
-          { key:'precio', label:'Precio', type:'number' },
-          { key:'marca', label:'Marca', type:'text' },
-          { key:'cantidad', label:'Cantidad', type:'number' },
-          { key:'imagen_url', label:'Imagen', type:'image' },
-        ]
+          { key: 'id', label: 'ID', type: 'number' },
+          { key: 'nombre', label: 'Nombre', type: 'text' },
+          { key: 'descripcion', label: 'Descripción', type: 'text' },
+          { key: 'precio', label: 'Precio', type: 'number' },
+          { key: 'marca', label: 'Marca', type: 'text' },
+          { key: 'cantidad', label: 'Cantidad', type: 'number' },
+          { key: 'imagen_url', label: 'Imagen', type: 'image' },
+        ],
       },
       ejes: {
         service: this.ejesService,
         columns: [
-          { key:'id', label:'ID', type:'number' },
-          { key:'nombre', label:'Nombre', type:'text' },
-          { key:'descripcion', label:'Descripción', type:'text' },
-          { key:'precio', label:'Precio', type:'number' },
-          { key:'marca', label:'Marca', type:'text' },
-          { key:'anchura', label:'Anchura', type:'number' },
-          { key:'altura', label:'Altura', type:'number' },
-          { key:'cantidad', label:'Cantidad', type:'number' },
-          { key:'imagen_url', label:'Imagen', type:'image' },
-        ]
+          { key: 'id', label: 'ID', type: 'number' },
+          { key: 'nombre', label: 'Nombre', type: 'text' },
+          { key: 'descripcion', label: 'Descripción', type: 'text' },
+          { key: 'precio', label: 'Precio', type: 'number' },
+          { key: 'marca', label: 'Marca', type: 'text' },
+          { key: 'anchura', label: 'Anchura', type: 'number' },
+          { key: 'altura', label: 'Altura', type: 'number' },
+          { key: 'cantidad', label: 'Cantidad', type: 'number' },
+          { key: 'imagen_url', label: 'Imagen', type: 'image' },
+        ],
       },
       tornillos: {
         service: this.tornillosService,
         columns: [
-          { key:'id', label:'ID', type:'number' },
-          { key:'nombre', label:'Nombre', type:'text' },
-          { key:'descripcion', label:'Descripción', type:'text' },
-          { key:'precio', label:'Precio', type:'number' },
-          { key:'marca', label:'Marca', type:'text' },
-          { key:'tamanho', label:'Tamaño', type:'number' },
-          { key:'cantidad', label:'Cantidad', type:'number' },
-          { key:'imagen_url', label:'Imagen', type:'image' },
-        ]
-      }
+          { key: 'id', label: 'ID', type: 'number' },
+          { key: 'nombre', label: 'Nombre', type: 'text' },
+          { key: 'descripcion', label: 'Descripción', type: 'text' },
+          { key: 'precio', label: 'Precio', type: 'number' },
+          { key: 'marca', label: 'Marca', type: 'text' },
+          { key: 'tamanho', label: 'Tamaño', type: 'number' },
+          { key: 'cantidad', label: 'Cantidad', type: 'number' },
+          { key: 'imagen_url', label: 'Imagen', type: 'image' },
+        ],
+      },
     };
   }
 
@@ -149,7 +165,7 @@ export class AdminComponent implements OnInit {
 
   /** Label del tipo seleccionado */
   get selectedLabel(): string {
-    const t = this.tipos.find(x => x.key === this.selectedTipo);
+    const t = this.tipos.find((x) => x.key === this.selectedTipo);
     return t ? t.label : '';
   }
 
@@ -172,7 +188,7 @@ export class AdminComponent implements OnInit {
       error: () => {
         this.error = 'Error al cargar ' + tipo;
         this.cargando = false;
-      }
+      },
     });
   }
 
@@ -182,6 +198,7 @@ export class AdminComponent implements OnInit {
     this.showCreateModal = true;
   }
   confirmCreate() {
+    this.newItem.imagen_url2 = 'imagen2';
     const svc = this.config[this.selectedTipo].service;
     svc.create(this.newItem).subscribe({
       next: (created: any) => {
@@ -191,7 +208,7 @@ export class AdminComponent implements OnInit {
       error: () => {
         alert('No se pudo crear.');
         this.showCreateModal = false;
-      }
+      },
     });
   }
   cancelCreate() {
@@ -214,7 +231,7 @@ export class AdminComponent implements OnInit {
       error: () => {
         alert('No se pudo actualizar.');
         this.showEditModal = false;
-      }
+      },
     });
   }
   cancelEdit() {
@@ -237,7 +254,7 @@ export class AdminComponent implements OnInit {
       error: () => {
         alert('No se pudo eliminar.');
         this.showConfirmModal = false;
-      }
+      },
     });
   }
   cancelDelete() {

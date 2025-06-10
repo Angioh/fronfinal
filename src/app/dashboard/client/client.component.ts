@@ -1,17 +1,23 @@
 // src/app/client/client.component.ts
 
 import { Component, OnDestroy, OnInit } from '@angular/core';
-import { FormBuilder, FormGroup, Validators, ReactiveFormsModule } from '@angular/forms';
+import {
+  FormBuilder,
+  FormGroup,
+  Validators,
+  ReactiveFormsModule,
+} from '@angular/forms';
 import { Subscription, of } from 'rxjs';
 import { switchMap, catchError } from 'rxjs/operators';
 import { AuthService } from '../../services/auth.service';
 import { UserService, ClienteProfile } from './user.service';
+import { CommonModule } from '@angular/common';
 
 @Component({
   selector: 'app-client',
-  imports: [ReactiveFormsModule],
+  imports: [ReactiveFormsModule, CommonModule],
   templateUrl: './client.component.html',
-  styleUrls: ['./client.component.css']
+  styleUrls: ['./client.component.css'],
 })
 export class ClientComponent implements OnInit, OnDestroy {
   profileForm!: FormGroup;
@@ -40,48 +46,55 @@ export class ClientComponent implements OnInit, OnDestroy {
   ) {}
 
   ngOnInit(): void {
-    // 1) Creamos el form reactivo con validaciones
-    this.profileForm = this.fb.group({
-      nombre: ['', Validators.required],
-      apellido: ['', Validators.required],
-      direccion: ['', Validators.required],
-      telefono: ['', [Validators.required, Validators.pattern(/^[0-9\-\+\s]*$/)]],
-      email: ['', [Validators.required, Validators.email]],
-      password: ['', [Validators.minLength(6)]], // opcional
-      confirmPassword: ['']
-    }, {
-      validators: this.passwordsMatchValidator
-    });
+    this.profileForm = this.fb.group(
+      {
+        nombre: ['', Validators.required],
+        apellido: ['', Validators.required],
+        direccion: ['', Validators.required],
+        telefono: [
+          '',
+          [Validators.required, Validators.pattern(/^[0-9\-\+\s]*$/)],
+        ],
+        email: ['', [Validators.required, Validators.email]],
+        password: ['', [Validators.minLength(6)]],
+        confirmPassword: [''],
+      },
+      {
+        validators: this.passwordsMatchValidator,
+      }
+    );
 
-    // Deshabilitamos todos los controles al iniciar
-    Object.keys(this.editableFields).forEach(field => {
+    Object.keys(this.editableFields).forEach((field) => {
       this.profileForm.get(field)?.disable();
     });
 
-    // 2) Obtenemos el ID del usuario actual desde AuthService.currentUser$
-    this.userSub = this.authService.currentUser$.pipe(
-      switchMap(user => {
-        if (!user) {
-          return of(null);
+    this.userSub = this.authService.currentUser$
+      .pipe(
+        switchMap((user) => {
+          if (!user) {
+            return of(null);
+          }
+          this.userId = user.id;
+          return this.userService.getProfile(this.userId);
+        })
+      )
+      .subscribe(
+        (profile) => {
+          if (profile) {
+            this.profileForm.patchValue({
+              nombre: profile.nombre,
+              apellido: profile.apellido,
+              direccion: profile.direccion,
+              telefono: profile.telefono,
+              email: profile.email,
+            });
+          }
+        },
+        (err) => {
+          console.error('Error al cargar perfil:', err);
+          this.error = 'No se pudo cargar tu perfil';
         }
-        this.userId = user.id;
-        return this.userService.getProfile(this.userId);
-      })
-    ).subscribe(profile => {
-      if (profile) {
-        this.profileForm.patchValue({
-          nombre: profile.nombre,
-          apellido: profile.apellido,
-          direccion: profile.direccion,
-          telefono: profile.telefono,
-          email: profile.email
-          // password y confirmPassword quedan vacíos
-        });
-      }
-    }, err => {
-      console.error('Error al cargar perfil:', err);
-      this.error = 'No se pudo cargar tu perfil';
-    });
+      );
   }
 
   ngOnDestroy(): void {
@@ -89,7 +102,6 @@ export class ClientComponent implements OnInit, OnDestroy {
     if (this.profileSub) this.profileSub.unsubscribe();
   }
 
-  /** Valida que password y confirmPassword coincidan */
   private passwordsMatchValidator(form: FormGroup) {
     const pass = form.get('password')?.value;
     const confirm = form.get('confirmPassword')?.value;
@@ -99,10 +111,6 @@ export class ClientComponent implements OnInit, OnDestroy {
     return null;
   }
 
-  /**
-   * Alterna el modo editable de un campo:
-   * Si está deshabilitado, lo habilita; si está habilitado, lo deshabilita.
-   */
   toggleEdit(field: string): void {
     const current = this.editableFields[field];
     this.editableFields[field] = !current;
@@ -126,38 +134,35 @@ export class ClientComponent implements OnInit, OnDestroy {
     this.success = '';
     this.loading = true;
 
-    // Construimos el payload con los campos editables
     const formValue = this.profileForm.value;
     const updateData: Partial<ClienteProfile> & { password?: string } = {
       nombre: formValue.nombre,
       apellido: formValue.apellido,
       direccion: formValue.direccion,
       telefono: formValue.telefono,
-      email: formValue.email
+      email: formValue.email,
     };
     if (formValue.password) {
       updateData.password = formValue.password;
     }
 
-    // <-- Aquí usamos PATCH en lugar de PUT -->
     this.profileSub = this.userService
-      .updateProfile(this.userId, updateData)  // cambio a método .updateProfilePatch(...)
+      .updateProfile(this.userId, updateData)
       .pipe(
-        catchError(err => {
+        catchError((err) => {
           console.error('Error al actualizar perfil:', err);
           this.error = 'Ocurrió un error al actualizar tu perfil.';
           this.loading = false;
           return of(null);
         })
       )
-      .subscribe(updated => {
+      .subscribe((updated) => {
         this.loading = false;
         if (updated) {
           this.success = 'Perfil actualizado correctamente.';
           this.authService.updateCurrentUser(updated);
 
-          // Tras guardar, deshabilitamos todos los campos y reiniciamos editableFields
-          Object.keys(this.editableFields).forEach(field => {
+          Object.keys(this.editableFields).forEach((field) => {
             this.profileForm.get(field)?.disable();
             this.editableFields[field] = false;
           });

@@ -13,13 +13,11 @@ import { RouterLink } from '@angular/router';
 export class RuedasComponent {
   ruedas: Rueda[] = [];
   filteredRuedas: Rueda[] = [];
-  visibleCount = 10;
-  incremento = 5;
+
   ordenSeleccionado: string = 'nombre';
+  ordenDireccion: 'asc' | 'desc' = 'asc';
   cargando = false;
-  filtroPrecioMax = 0.0;
   filtroMarca = '';
-  filtroMinPrecio: any;
 
   constructor(private ruedasService: RuedasService) {}
 
@@ -38,45 +36,60 @@ export class RuedasComponent {
       });
   }
 
-  aplicarFiltros(): void {
-    this.filteredRuedas = this.ruedas.filter((rueda) => {
-      const cumpleMarca =
-        !this.filtroMarca ||
-        rueda.marca?.toLowerCase().includes(this.filtroMarca.toLowerCase());
-      const cumpleMinPrecio =
-        !this.filtroMinPrecio || rueda.precio >= this.filtroMinPrecio;
 
-      return cumpleMarca && cumpleMinPrecio;
-    });
+  aplicarFiltros(): void {
+    this.filteredRuedas = this.ruedas.filter(
+      (tabla) =>
+        !this.filtroMarca ||
+        tabla.marca?.toLowerCase().includes(this.filtroMarca.toLowerCase())
+    );
+
     this.ordenarRuedas();
-    this.visibleCount = 10;
+
   }
 
   limpiarFiltros() {
-    this.filtroPrecioMax = 0.0;
-    this.filtroMarca = '';
+    this.filtroMarca = 'Todos';
     this.filteredRuedas = this.ruedas;
   }
 
-  verMas(): void {
-    this.visibleCount = Math.min(
-      this.visibleCount + this.incremento,
-      this.filteredRuedas.length
-    );
-  }
+
 
   ordenarRuedas(): void {
-    const campo = this.ordenSeleccionado;
 
-    this.filteredRuedas.sort((a: any, b: any) => {
-      if (campo === 'precio') {
-        return a.precio - b.precio;
-      }
+  const [campo, dir] = this.ordenSeleccionado.split('-');
+  const asc = dir === 'asc';
 
-      const valorA = a[campo]?.toString().toLowerCase() || '';
-      const valorB = b[campo]?.toString().toLowerCase() || '';
+  const comparator = (a: any, b: any): number => {
+    if (campo === 'precio') {
 
-      return valorA.localeCompare(valorB);
-    });
+      return asc
+        ? a.precio - b.precio
+        : b.precio - a.precio;
+    }
+
+
+    const valorA = (a[campo]?.toString() || '').toLowerCase();
+    const valorB = (b[campo]?.toString() || '').toLowerCase();
+
+    return valorA.localeCompare(valorB);
+  };
+
+
+  this.ruedas.sort(comparator);
+
+  if (this.filteredRuedas?.length) {
+    this.filteredRuedas.sort(comparator);
+  }
+  }
+  get marcasUnicas(): string[] {
+
+    return Array.from(
+      new Set(
+        this.ruedas
+          .map(t => t.marca || '')      
+          .filter(m => m.trim().length) 
+      )
+    );
   }
 }

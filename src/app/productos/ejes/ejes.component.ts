@@ -1,24 +1,21 @@
-import { Component,OnInit } from '@angular/core';
-import { EjesService, Eje} from './ejes.service';
+import { Component, OnInit } from '@angular/core';
+import { EjesService, Eje } from './ejes.service';
 import { FormsModule } from '@angular/forms';
 import { finalize } from 'rxjs';
 import { RouterLink } from '@angular/router';
 @Component({
   selector: 'app-ejes',
-  imports: [FormsModule,RouterLink],
+  imports: [FormsModule, RouterLink],
   templateUrl: './ejes.component.html',
-  styleUrl: './ejes.component.css'
+  styleUrl: './ejes.component.css',
 })
 export class EjesComponent {
-ejes: Eje[] = [];
-filteredEjes: Eje[] = [];
-    visibleCount = 10;
-    incremento = 5;
-    ordenSeleccionado: string = 'nombre'
-    cargando = false;
-    filtroPrecioMax= 0.00;
-    filtroMarca = '';
-    filtroMinPrecio: any;
+  ejes: Eje[] = [];
+  filteredEjes: Eje[] = [];
+  ordenSeleccionado: string = 'nombre';
+  ordenDireccion: 'asc' | 'desc' = 'asc';
+  cargando = false;
+  filtroMarca = '';
 
   constructor(private ejesService: EjesService) {}
 
@@ -28,52 +25,55 @@ filteredEjes: Eje[] = [];
 
   private fetchEjes() {
     this.cargando = true;
-    this.ejesService.getAll().pipe(
-      finalize(() => this.cargando = false) 
-    ).subscribe({
-      next: (data) => (this.ejes = data),
-      error: (err) => console.error('Error al cargar ejes:', err),
-    });
+    this.ejesService
+      .getAll()
+      .pipe(finalize(() => (this.cargando = false)))
+      .subscribe({
+        next: (data) => (this.ejes = data),
+        error: (err) => console.error('Error al cargar ejes:', err),
+      });
   }
 
-   aplicarFiltros(): void {
-  this.filteredEjes = this.ejes.filter((eje) => {
-    const cumpleMarca =
-      !this.filtroMarca || eje.marca?.toLowerCase().includes(this.filtroMarca.toLowerCase());
+  aplicarFiltros(): void {
+    this.filteredEjes = this.ejes.filter(
+      (eje) =>
+        !this.filtroMarca ||
+        eje.marca?.toLowerCase().includes(this.filtroMarca.toLowerCase())
+    );
 
-    const cumpleMinPrecio =
-      !this.filtroMinPrecio || eje.precio >= this.filtroMinPrecio;
+    this.ordenarEjes();
+  }
 
-
-    return cumpleMarca &&  cumpleMinPrecio ;
-  });
-  this.ordenarEjes();
-  this.visibleCount = 10; 
-}
-
-limpiarFiltros() {
-    this.filtroPrecioMax = 0.00;
-    this.filtroMarca = '';
+  limpiarFiltros() {
+    this.filtroMarca = 'Todos';
     this.filteredEjes = this.ejes;
   }
 
-  verMas(): void {
-  this.visibleCount = Math.min(this.visibleCount + this.incremento, this.filteredEjes.length);
-}
+  ordenarEjes(): void {
+    const [campo, dir] = this.ordenSeleccionado.split('-');
+    const asc = dir === 'asc';
 
+    const comparator = (a: any, b: any): number => {
+      if (campo === 'precio') {
+        return asc ? a.precio - b.precio : b.precio - a.precio;
+      }
 
-ordenarEjes(): void {
-  const campo = this.ordenSeleccionado;
+      const valorA = (a[campo]?.toString() || '').toLowerCase();
+      const valorB = (b[campo]?.toString() || '').toLowerCase();
+      return valorA.localeCompare(valorB);
+    };
 
-  this.filteredEjes.sort((a: any, b: any) => {
-    if (campo === 'precio') {
-      return a.precio - b.precio;
+    this.ejes.sort(comparator);
+
+    if (this.filteredEjes?.length) {
+      this.filteredEjes.sort(comparator);
     }
-
-    const valorA = a[campo]?.toString().toLowerCase() || '';
-    const valorB = b[campo]?.toString().toLowerCase() || '';
-
-    return valorA.localeCompare(valorB);
-  });
-}
+  }
+  get marcasUnicas(): string[] {
+    return Array.from(
+      new Set(
+        this.ejes.map((t) => t.marca || '').filter((m) => m.trim().length)
+      )
+    );
+  }
 }

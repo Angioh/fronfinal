@@ -1,0 +1,27 @@
+/* Mantiene el thead en su sitio y hace al tbody scrollable */
+.table-responsive table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.table-responsive thead,
+.table-responsive tbody tr {
+  display: table;
+  width: 100%;
+  table-layout: fixed;
+}
+
+.scrollable-tbody {
+  display: block;
+  max-height: calc(5 * 3rem); /* aprox 5 filas de 3rem de alto */
+  overflow-y: auto;
+}
+
+/* Opcional: personaliza el scrollbar */
+.scrollable-tbody::-webkit-scrollbar {
+  width: 6px;
+}
+.scrollable-tbody::-webkit-scrollbar-thumb {
+  background-color: rgba(0,0,0,0.2);
+  border-radius: 3px;
+}
