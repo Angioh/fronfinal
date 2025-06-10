@@ -5,7 +5,7 @@ services:
     env: node              
     branch: main           
     buildCommand: "npm install && npm run build"
-    staticPublishPath: "dist/frontkick"  
+    staticPublishPath: "dist/frontkick/browser"  
     routes:
       - type: rewrite
         source: "/*"
