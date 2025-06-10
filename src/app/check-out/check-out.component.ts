@@ -16,7 +16,6 @@ import { CarritoService, CarritoItem } from '../services/carrito.service';
 import { AuthService } from '../services/auth.service';
 import { ValidacionesPropias } from './validaciones-propias';
 import { debounceTime, distinctUntilChanged } from 'rxjs/operators';
-import { InvoiceService, InvoiceData } from '../services/invoice.service';
 import { PedidoService } from '../services/pedido.service';
 import { Pedido } from '../pedido/pedido.model';
 
@@ -52,61 +51,6 @@ export class CheckOutComponent implements AfterViewInit, OnInit {
   modalTitle = '';
   modalMessage = '';
 
-  provincias: { [key: number]: string } = {
-    1: '\u00C1lava',
-    2: 'Albacete',
-    3: 'Alicante',
-    4: 'Almer\u00EDa',
-    5: '\u00C1vila',
-    6: 'Badajoz',
-    7: 'Baleares',
-    8: 'Barcelona',
-    9: 'Burgos',
-    10: 'C\u00E1ceres',
-    11: 'C\u00E1diz',
-    12: 'Castell\u00F3n',
-    13: 'Ciudad Real',
-    14: 'C\u00F3rdoba',
-    15: 'Coruña',
-    16: 'Cuenca',
-    17: 'Gerona',
-    18: 'Granada',
-    19: 'Guadalajara',
-    20: 'Guip\u00FAzcoa',
-    21: 'Huelva',
-    22: 'Huesca',
-    23: 'Ja\u00E9n',
-    24: 'Le\u00F3n',
-    25: 'L\u00E9rida',
-    26: 'La Rioja',
-    27: 'Lugo',
-    28: 'Madrid',
-    29: 'M\u00E1laga',
-    30: 'Murcia',
-    31: 'Navarra',
-    32: 'Orense',
-    33: 'Asturias',
-    34: 'Palencia',
-    35: 'Las Palmas',
-    36: 'Pontevedra',
-    37: 'Salamanca',
-    38: 'Santa Cruz de Tenerife',
-    39: 'Cantabria',
-    40: 'Segovia',
-    41: 'Sevilla',
-    42: 'Soria',
-    43: 'Tarragona',
-    44: 'Teruel',
-    45: 'Toledo',
-    46: 'Valencia',
-    47: 'Valladolid',
-    48: 'Vizcaya',
-    49: 'Zamora',
-    50: 'Zaragoza',
-    51: 'Ceuta',
-    52: 'Melilla',
-  };
-
   private currentUserId!: number;
 
   constructor(
@@ -115,7 +59,6 @@ export class CheckOutComponent implements AfterViewInit, OnInit {
     private stripeService: StripeService,
     private http: HttpClient,
     private auth: AuthService,
-    private invoiceSvc: InvoiceService,
     private pedidoService: PedidoService 
   ) {
     this.paymentForm = this.fb.group({
@@ -145,15 +88,16 @@ export class CheckOutComponent implements AfterViewInit, OnInit {
           Validators.minLength(10),
         ],
       ],
-      codigoPostal: ['', [Validators.required, ValidacionesPropias.esNum,Validators.minLength(5),
-          ValidacionesPropias.cPostalExiste]],
-      provincia: [
+      codigoPostal: [
         '',
         [
           Validators.required,
-          
+          ValidacionesPropias.esNum,
+          Validators.minLength(5),
+          ValidacionesPropias.cPostalExiste,
         ],
       ],
+      provincia: ['', [Validators.required]],
     });
 
     this.carritoService.carrito$.subscribe((items) => {
@@ -248,38 +192,19 @@ export class CheckOutComponent implements AfterViewInit, OnInit {
               'Tu pago se ha realizado con éxito.'
             );
 
-            // Envío de factura
-            const invoice: InvoiceData = {
-              number: result.paymentIntent.id,
-              date: new Date().toLocaleDateString('es-ES'),
-              customer: {
-                name: this.paymentForm.value.name,
-                email: this.paymentForm.value.email,
-              },
-              items: this.carritoItems.map((i) => ({
-                description: `${i.nombre} #${i.id}`,
-                quantity: i.cantidad,
-                price: i.precio,
-              })),
-            };
-            const invoicePayload = {
-              email: this.paymentForm.value.email,
-              invoice,
-              shipping: {
-                telefono: this.paymentForm.value.telefono,
-                direccion: this.paymentForm.value.direccion,
-                codigoPostal: this.paymentForm.value.codigoPostal,
-                provincia: this.paymentForm.value.provincia,
-              },
-              total: this.total,
-              paymentIntentId: result.paymentIntent.id,
-            };
-            this.invoiceSvc.sendInvoice(invoicePayload).subscribe({
+            // Limpiar carrito
+            this.carritoService.clearCart();
+
+            // Enviar solo paymentIntentId al servicio de facturas
+            this.http.post(
+              'https://backend-d2i9.onrender.com/email/send-invoice',
+              { paymentIntentId: result.paymentIntent.id }
+            ).subscribe({
               next: () => console.log('Factura enviada'),
               error: (e) => console.error('Error enviando factura', e),
             });
 
-            // Creación de pedido en el backend
+            // Crear pedido en backend
             const totalCantidad = this.carritoItems.reduce(
               (sum, i) => sum + i.cantidad,
               0
@@ -304,9 +229,8 @@ export class CheckOutComponent implements AfterViewInit, OnInit {
               error: (err) => console.error('Error creando pedido:', err),
             });
 
-            // Limpieza final
+            // Reset del formulario
             this.paymentForm.reset();
-            this.carritoService.clearCart();
           }
         },
         error: (err) => {
@@ -326,13 +250,70 @@ export class CheckOutComponent implements AfterViewInit, OnInit {
     this.modalInstance.show();
   }
 
+  provincias: { [key: number]: string } = {
+    1: '\u00C1lava',
+    2: 'Albacete',
+    3: 'Alicante',
+    4: 'Almer\u00EDa',
+    5: '\u00C1vila',
+    6: 'Badajoz',
+    7: 'Baleares',
+    8: 'Barcelona',
+    9: 'Burgos',
+    10: 'C\u00E1ceres',
+    11: 'C\u00E1diz',
+    12: 'Castell\u00F3n',
+    13: 'Ciudad Real',
+    14: 'C\u00F3rdoba',
+    15: 'Coruña',
+    16: 'Cuenca',
+    17: 'Gerona',
+    18: 'Granada',
+    19: 'Guadalajara',
+    20: 'Guip\u00FAzcoa',
+    21: 'Huelva',
+    22: 'Huesca',
+    23: 'Ja\u00E9n',
+    24: 'Le\u00F3n',
+    25: 'L\u00E9rida',
+    26: 'La Rioja',
+    27: 'Lugo',
+    28: 'Madrid',
+    29: 'M\u00E1laga',
+    30: 'Murcia',
+    31: 'Navarra',
+    32: 'Orense',
+    33: 'Asturias',
+    34: 'Palencia',
+    35: 'Las Palmas',
+    36: 'Pontevedra',
+    37: 'Salamanca',
+    38: 'Santa Cruz de Tenerife',
+    39: 'Cantabria',
+    40: 'Segovia',
+    41: 'Sevilla',
+    42: 'Soria',
+    43: 'Tarragona',
+    44: 'Teruel',
+    45: 'Toledo',
+    46: 'Valencia',
+    47: 'Valladolid',
+    48: 'Vizcaya',
+    49: 'Zamora',
+    50: 'Zaragoza',
+    51: 'Ceuta',
+    52: 'Melilla',
+  };
+
   cargarProvincia(codP: string) {
     const cod = parseInt(codP, 10);
     if (codP.length === 5 && cod >= 1000 && cod <= 52999) {
       const key = parseInt(codP.substring(0, 2), 10);
       this.paymentForm.get('provincia')!.setValue(this.provincias[key] || '');
     } else {
-      this.paymentForm.get('provincia')!.setValue('Código postal inexistente');
+      this.paymentForm
+        .get('provincia')!
+        .setValue('Código postal inexistente');
     }
   }
 }
