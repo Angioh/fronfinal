@@ -1,5 +1,6 @@
 services:
-  - type: web     
+  - type: web
+    runtime: static     
     name: Frontkick 
     env: node              
     branch: main           
