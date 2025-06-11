@@ -12,6 +12,7 @@ import { switchMap, catchError } from 'rxjs/operators';
 import { AuthService } from '../../services/auth.service';
 import { UserService, ClienteProfile } from './user.service';
 import { CommonModule } from '@angular/common';
+import { ValidacionesPropias } from '../../check-out/validaciones-propias';
 
 @Component({
   selector: 'app-client',
@@ -56,8 +57,8 @@ export class ClientComponent implements OnInit, OnDestroy {
           [Validators.required, Validators.pattern(/^[0-9\-\+\s]*$/)],
         ],
         email: ['', [Validators.required, Validators.email]],
-        password: ['', [Validators.minLength(6)]],
-        confirmPassword: [''],
+        password: ['', [Validators.minLength(6),ValidacionesPropias.passwordSegura]],
+        confirmPassword: ['',[ValidacionesPropias.passwordSegura]],
       },
       {
         validators: this.passwordsMatchValidator,

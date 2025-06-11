@@ -52,6 +52,14 @@
                 Debes ingresar un teléfono válido.
               } @else if (campo.key === 'password') {
                 La contraseña debe tener al menos 6 caracteres.
+                 <div class="text-danger small mt-1">
+            Debe incluir al menos:
+            <ul class="mb-0">
+              <li>Una mayúscula</li>
+              <li>Un número</li>
+              <li>Un carácter “.” o “-”</li>
+            </ul>
+          </div>
               } @else {
                 Este campo es obligatorio.
               }
